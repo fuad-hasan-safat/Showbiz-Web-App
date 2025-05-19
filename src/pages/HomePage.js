@@ -58,7 +58,7 @@ const HomePage = () => {
   }
 
   const handleSeeAll = () => {
-    setTrendingData(trandingData);
+    // setTrendingData(trandingData);
   }
 
 
@@ -135,177 +135,6 @@ const HomePage = () => {
   };
 
 
-  // Data for sliders
-  const trandingData = [
-    {
-      title: "Bednazi Do",
-      subtitle: "Comedy/Drama",
-      image: "images/tranding-slide-img-1.png"
-    },
-    {
-      title: "Pushpa",
-      subtitle: "Action/Thriller",
-      image: "images/tranding-slide-img-2.png"
-    },
-    {
-      title: "DEA ON T NIL\nDeath On The Nile",
-      subtitle: "Action/Thriller",
-      multiLine: true,
-      image: "images/tranding-slide-img-3.webp"
-    },
-    {
-      title: "DEA ON T NIL\nDeath On The Nile",
-      subtitle: "Action/Thriller",
-      multiLine: true,
-      image: "images/tranding-slide-img-4.jpg"
-    },
-    {
-      title: "DEA ON T NIL\nDeath On The Nile",
-      subtitle: "Action/Thriller",
-      multiLine: true,
-      image: "images/tranding-slide-img-5.jpg"
-    },
-    {
-      title: "DEA ON T NIL\nDeath On The Nile",
-      subtitle: "Action/Thriller",
-      multiLine: true,
-      image: "images/tranding-slide-img-6.webp"
-    },
-    {
-      title: "DEA ON T NIL\nDeath On The Nile",
-      subtitle: "Action/Thriller",
-      multiLine: true,
-      image: "images/tranding-slide-img-7.jpg"
-    },
-    {
-      title: "DEA ON T NIL\nDeath On The Nile",
-      subtitle: "Action/Thriller",
-      multiLine: true,
-      image: "images/tranding-slide-img-8.jpg"
-    },
-    {
-      title: "DEA ON T NIL\nDeath On The Nile",
-      subtitle: "Action/Thriller",
-      multiLine: true,
-      image: "images/tranding-slide-img-1.png"
-    }
-  ];
-
-  const newReleasesData = [
-    {
-      title: "J A R E D L E T O",
-      subtitle: "A NEW MATTER BREAK AWAYS",
-      info: "MORBIUS\nEXCLUSIVELY SHOOKS APRIL 1",
-      time: "1h 30min",
-      views: "2K",
-      image: "images/newrelease-slide-img-1.png"
-    },
-    {
-      title: "KILLING MUST TRUST YOURSELF",
-      subtitle: "BEAUTY MAN",
-      info: "TRAILER RELEASES\n(1) APRIL",
-      time: "1h 57min",
-      views: "1.5K",
-      image: "images/newrelease-slide-img-1.png"
-    },
-    {
-      title: "KILLING MUST TRUST YOURSELF",
-      subtitle: "BEAUTY MAN",
-      info: "TRAILER RELEASES\n(1) APRIL",
-      time: "1h 57min",
-      views: "1.5K",
-      image: "images/newrelease-slide-img-1.png"
-    },
-    {
-      title: "KILLING MUST TRUST YOURSELF",
-      subtitle: "BEAUTY MAN",
-      info: "TRAILER RELEASES\n(1) APRIL",
-      time: "1h 57min",
-      views: "1.5K",
-      image: "images/newrelease-slide-img-1.png"
-    },
-    {
-      title: "KILLING MUST TRUST YOURSELF",
-      subtitle: "BEAUTY MAN",
-      info: "TRAILER RELEASES\n(1) APRIL",
-      time: "1h 57min",
-      views: "1.5K",
-      image: "images/newrelease-slide-img-1.png"
-    }
-  ];
-
-  const entertainmentData = [
-    {
-      info: "Released at",
-      dates: "14 April 2023",
-      title: "Entertainment Images",
-      image: "images/entertainment-slide-img-1.png"
-    },
-    {
-      info: "Released at",
-      dates: "14 April 2023",
-      title: "Entertainment Images",
-      image: "images/entertainment-slide-img-1.png"
-    },
-    {
-      info: "Released at",
-      dates: "14 April 2023",
-      title: "Entertainment Images",
-      image: "images/entertainment-slide-img-1.png"
-    },
-    {
-      info: "Released at",
-      dates: "14 April 2023",
-      title: "Entertainment Images",
-      image: "images/entertainment-slide-img-1.png"
-    },
-    {
-      info: "Released at",
-      dates: "14 April 2023",
-      title: "Entertainment Images",
-      image: "images/entertainment-slide-img-1.png"
-    }
-  ];
-
-  const lifestyleData = [
-    {
-      hours: "1h 57min",
-      views: "20K",
-      title: 'Lifestyle Images',
-      image: "images/lifestyle-slide-img-1.png"
-    },
-    {
-      hours: "1h 57min",
-      views: "20K",
-      title: 'Lifestyle Images',
-      image: "images/lifestyle-slide-img-1.png"
-    },
-    {
-      hours: "1h 57min",
-      views: "20K",
-      title: 'Lifestyle Images',
-      image: "images/lifestyle-slide-img-1.png"
-    },
-    {
-      hours: "1h 57min",
-      views: "20K",
-      title: 'Lifestyle Images',
-      image: "images/lifestyle-slide-img-1.png"
-    },
-    {
-      hours: "1h 57min",
-      views: "20K",
-      title: 'Lifestyle Images',
-      image: "images/lifestyle-slide-img-1.png"
-    },
-    {
-      hours: "1h 57min",
-      views: "20K",
-      title: 'Lifestyle Images',
-      image: "images/lifestyle-slide-img-1.png"
-    },
-  ];
-
 
   const playlistTypeComponents = {
     trending: TrendingCard,
@@ -351,6 +180,7 @@ const HomePage = () => {
               {homepagedata && homepagedata.map((homedata, index) => {
                 const { playlistName, playlistUUID, playlistType, items } = homedata
                 const CardComponent = playlistTypeComponents[playlistType] || TrendingCard;
+                const sliderSettingsComponent = sliderSettings[playlistType] || trandingSliderSettings;
                 console.log({ items })
                 return (
                   <div key={index} className="mb-10 pl-[10px]">
@@ -360,20 +190,28 @@ const HomePage = () => {
                         <button className="flex justify-center items-center text-[14px] text-[#FE0101]">See All <FaAngleRight /> </button>
                       </Link>
                     </div>
-                    <Slider {...trandingSliderSettings}>
+                    <Slider {...sliderSettingsComponent}>
 
-                      {items.map((item, index) => (
-                        <CardComponent
-                          key={index}
-                          {...item}
-                          // Add any additional props needed for specific cards
-                          title={item.contentName}
-                          subtitle={item.categoryName}
-                          image={item.thumbnailPath}
-                          time={`${Math.floor(item.videoLength / 60)}h ${item.videoLength % 60}min`}
-                          views={`${item.viewCount}K`}
-                        />
-                      ))}
+                      {items.map((item, index) => {
+                        const formateddate = new Date(item.created_at).toLocaleDateString('en-GB', {
+                          day: 'numeric',
+                          month: 'long',
+                          year: 'numeric'
+                        })
+                        return (
+                          <CardComponent
+                            key={index}
+                            {...item}
+                            // Add any additional props needed for specific cards
+                            title={item.contentName}
+                            subtitle={item.categoryName}
+                            image={item.thumbnailPath}
+                            time={`${Math.floor(item.videoLength / 60)}h ${item.videoLength % 60}min`}
+                            views={`${item.viewCount}K`}
+                            dates={`${formateddate}`}
+                          />
+                        )
+                      })}
                     </Slider>
                   </div>
                 )
@@ -387,9 +225,9 @@ const HomePage = () => {
             <div className="mb-10 pl-[10px]">
               <h2 className="text-[20px] text-[#292626] pl-[10px] font-semibold mb-3">Entertainment</h2>
               <Slider {...entertainmentSliderSettings}>
-                {entertainmentData.map((item, index) => (
+                {/* {entertainmentData.map((item, index) => (
                   <EntertainmentCard key={index} {...item} />
-                ))}
+                ))} */}
               </Slider>
             </div>
           )}
@@ -399,9 +237,9 @@ const HomePage = () => {
             <div className="mb-10 pl-[10px]">
               <h2 className="text-[20px] pl-[10px] text-[#FE0101] font-semibold mb-3">Lifestyle</h2>
               <Slider {...lifestyleSliderSettings}>
-                {lifestyleData.map((item, index) => (
+                {/* {lifestyleData.map((item, index) => (
                   <LifestyleCard key={index} {...item} />
-                ))}
+                ))} */}
               </Slider>
             </div>
           )}
@@ -453,7 +291,7 @@ const NewReleaseCard = ({ title, time, views, image }) => (
   </div>
 );
 
-const EntertainmentCard = ({ title, info, dates, image }) => (
+const EntertainmentCard = ({ title, dates, image }) => (
   <div className="px-2">
     <div className="bg-[#292626] border-2 border-[#262626] rounded-[10px] overflow-hidden h-full p-3">
       <Link to='/' className=' absolute right-0 top-0 bottom-0 left-0'></Link>
@@ -463,13 +301,13 @@ const EntertainmentCard = ({ title, info, dates, image }) => (
         className="w-full h-[250px] rounded-[15px] object-cover"
       />
       <div className="flex justify-center text-center mt-3 text-[10px] lg:text-[12px]">
-        <span className='bg-[#141414] rounded-full px-[10px] py-1 text-[#999999] border-2 border-[#2b2b2b]'>{info} <p className='text-white inline-block'>{dates}</p></span>
+        <span className='bg-[#141414] rounded-full px-[10px] py-1 text-[#999999] border-2 border-[#2b2b2b]'> Release at <p className='text-white inline-block'>{dates}</p></span>
       </div>
     </div>
   </div>
 );
 
-const LifestyleCard = ({ title, hours, views, image }) => (
+const LifestyleCard = ({ title, time, views, image }) => (
   <div className="px-2">
     <div className="bg-[#292626] border-2 border-[#262626] rounded-[10px] overflow-hidden h-full p-3">
       <Link to='/' className=' absolute right-0 top-0 bottom-0 left-0'></Link>
@@ -479,7 +317,7 @@ const LifestyleCard = ({ title, hours, views, image }) => (
         className="w-full h-[250px] rounded-[15px] object-cover"
       />
       <div className="flex justify-between mt-3 text-[10px] lg:text-[12px]">
-        <span className='bg-[#141414] flex justify-center items-center rounded-full px-[8px] py-1 text-[#999999] border-2 border-[#2b2b2b]'><BiTime /> {hours}</span>
+        <span className='bg-[#141414] flex justify-center items-center rounded-full px-[8px] py-1 text-[#999999] border-2 border-[#2b2b2b]'><BiTime /> {time}</span>
         <span className='bg-[#141414] flex justify-center items-center rounded-full px-[8px] py-1 text-[#999999] border-2 border-[#2b2b2b]'><IoStar className='text-[#FE0101]' /> <IoStar className='text-[#FE0101]' /> <IoStar className='text-[#FE0101]' /> <IoStarHalf className='text-[#FE0101]' /> {views}</span>
       </div>
     </div>
