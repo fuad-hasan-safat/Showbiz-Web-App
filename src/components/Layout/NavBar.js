@@ -41,7 +41,7 @@ const NavBar = ({ isOpen, onClose }) => {
         <VscHistory className='absolute left-0' />
           History
         </Link>
-        <Link to="/signin" className="flex justify-left items-center relative text-[16px] text-[#292626] hover:text-[#FE0101] pl-[30px]" onClick={onClose}>
+        <Link to="/start" className="flex justify-left items-center relative text-[16px] text-[#292626] hover:text-[#FE0101] pl-[30px]" onClick={onClose}>
           <HiOutlineLogout className='absolute left-0' />
           Logout
         </Link>

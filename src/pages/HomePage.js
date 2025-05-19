@@ -371,6 +371,7 @@ const HomePage = () => {
 const MovieCard = ({ title, subtitle, multiLine = false, image }) => (
   <div className="px-2">
     <div className="rounded-[15px] relative overflow-hidden h-[250px]">
+      <Link to='/' className=' absolute right-0 top-0 bottom-0 left-0'></Link>
       <img 
         src={image} 
         alt={title}
@@ -393,6 +394,7 @@ const MovieCard = ({ title, subtitle, multiLine = false, image }) => (
 const NewReleaseCard = ({ title, time, views, image }) => (
   <div className="px-2">
     <div className="bg-[#292626] border-2 border-[#262626] rounded-[10px] overflow-hidden h-full p-3">
+      <Link to='/' className=' absolute right-0 top-0 bottom-0 left-0'></Link>
         <img 
             src={image} 
             alt={title}
@@ -409,6 +411,7 @@ const NewReleaseCard = ({ title, time, views, image }) => (
 const EntertainmentCard = ({ title, info, dates, image }) => (
   <div className="px-2">
      <div className="bg-[#292626] border-2 border-[#262626] rounded-[10px] overflow-hidden h-full p-3">
+      <Link to='/' className=' absolute right-0 top-0 bottom-0 left-0'></Link>
         <img 
             src={image} 
             alt={title}
@@ -424,6 +427,7 @@ const EntertainmentCard = ({ title, info, dates, image }) => (
 const LifestyleCard = ({ title, hours, views, image }) => (
   <div className="px-2">
     <div className="bg-[#292626] border-2 border-[#262626] rounded-[10px] overflow-hidden h-full p-3">
+      <Link to='/' className=' absolute right-0 top-0 bottom-0 left-0'></Link>
         <img 
             src={image} 
             alt={title}
