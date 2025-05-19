@@ -7,8 +7,35 @@ const VerificationPage = () => {
   const navigate = useNavigate();
   const phoneNumber = location.state?.phone || 'Unknown';
 
-  const handleComplete = () => {
-    navigate('/home'); 
+  const handleComplete = async (props) => {
+   console.log({props})
+    try {
+      if (!phoneNumber || phoneNumber === 'Unknown') {
+        throw new Error('Phone number is missing');
+      }
+
+      const response = await fetch('http://localhost:3000/auth/verify-otp', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          phone: phoneNumber,
+          otp: props
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'OTP verification failed');
+      }
+
+      // On successful verification
+      navigate('/home');
+    } catch (error) {
+      console.error('Verification failed:', error);
+      alert(error.message || 'Failed to verify OTP. Please try again.');
+    }
   };
 
   return (

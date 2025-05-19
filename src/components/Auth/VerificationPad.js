@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 
-const VerificationPad = ({ onComplete }) => {
+const VerificationPad = ({ phone, onComplete }) => {
   const [code, setCode] = useState(['', '', '', '']);
   const inputsRef = useRef([]);
 

@@ -5,8 +5,27 @@ import PhoneInput from '../components/Auth/PhoneInput';
 const SingInPage = () => {
   const navigate = useNavigate();
 
-  const handleSubmit = (phone) => {
-    navigate('/verify', { state: { phone } });
+  const handleSubmit = async (phone) => {
+     try {
+      const response = await fetch('http://localhost:3000/auth/request-otp', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ phone }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to send OTP');
+      }
+
+      // On successful OTP request, navigate to verify page
+      navigate('/verify', { state: { phone } });
+    } catch (error) {
+      console.error('OTP request failed:', error);
+      alert(error.message || 'Failed to send OTP. Please try again.');
+    }
   };
 
   return (
