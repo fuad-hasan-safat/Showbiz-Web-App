@@ -1,7 +1,14 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate
+} from 'react-router-dom';
+
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
+
 import HomePage from './pages/HomePage';
 import VerificationPage from './pages/VerificationPage';
 import MovieStatsPage from './pages/MovieStatsPage';
@@ -16,14 +23,17 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/singin" element={<SingInPage/>} />
-        <Route path="/verify" element={<VerificationPage />} />
-        <Route path="/movie-stats" element={<MovieStatsPage />} />
+        {/* Redirect root to /start */}
+        <Route path="/" element={<Navigate to="/start" replace />} />
+
         <Route path="/start" element={<StartPage />} />
+        <Route path="/singin" element={<SingInPage />} />
+        <Route path="/verify" element={<VerificationPage />} />
+        <Route path="/home" element={<HomePage />} />
+        <Route path="/movie-stats" element={<MovieStatsPage />} />
         <Route path="/seeall" element={<SeeAll />} />
         <Route path="/profile" element={<ProfileEdit />} />
-        <Route path="/notification" element={<Notification/>} />
+        <Route path="/notification" element={<Notification />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </Router>

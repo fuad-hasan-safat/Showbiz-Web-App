@@ -10,9 +10,9 @@ const Footer = () => {
 
   const menuItems = [
     { id: 'home', icon: <CiHome size={30} />, path: '/' },
-    { id: 'search', icon: <IoSearch size={30} />, path: '/search' },
-    { id: 'time', icon: <IoMdTime size={30} />, path: '/history' },
-    { id: 'user', icon: <FiUser size={30} />, path: '/verify' },
+    { id: 'search', icon: <IoSearch size={30} />, path: '/' },
+    { id: 'time', icon: <IoMdTime size={30} />, path: '/' },
+    { id: 'user', icon: <FiUser size={30} />, path: '/Profile' },
   ];
 
   return (
