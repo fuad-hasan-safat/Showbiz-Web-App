@@ -30,8 +30,8 @@ function App() {
         <Route path="/singin" element={<SingInPage />} />
         <Route path="/verify" element={<VerificationPage />} />
         <Route path="/home" element={<HomePage />} />
-        <Route path="/movie-stats" element={<MovieStatsPage />} />
-        <Route path="/seeall" element={<SeeAll />} />
+        <Route path="/movie-stats/:contentID" element={<MovieStatsPage />} />
+        <Route path="/seeall/:playlistUUID" element={<SeeAll />} />
         <Route path="/profile" element={<ProfileEdit />} />
         <Route path="/notification" element={<Notification />} />
         <Route path="*" element={<NotFoundPage />} />

@@ -1,20 +1,27 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import VerificationPad from '../components/Auth/VerificationPad';
+import { configs } from '../utils/constant';
 
 const VerificationPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const phoneNumber = location.state?.phone || 'Unknown';
 
+  useEffect(() => {
+    if (localStorage.getItem('access_token')) {
+      navigate('/home');
+    }
+  }, [navigate])
+
   const handleComplete = async (props) => {
-   console.log({props})
+    console.log({ props })
     try {
       if (!phoneNumber || phoneNumber === 'Unknown') {
         throw new Error('Phone number is missing');
       }
 
-      const response = await fetch('http://localhost:3000/auth/verify-otp', {
+      const response = await fetch(`${configs.API_BASE_PATH}/auth/verify-otp`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -29,6 +36,10 @@ const VerificationPage = () => {
         const errorData = await response.json();
         throw new Error(errorData.message || 'OTP verification failed');
       }
+      const data = await response.json();
+      localStorage.setItem('access_token', data.access_token);
+      localStorage.setItem('user_uuid', data.user.uuid);
+      localStorage.setItem('user_phone', data.user.phone);
 
       // On successful verification
       navigate('/home');

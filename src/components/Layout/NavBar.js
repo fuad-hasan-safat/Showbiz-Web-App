@@ -8,13 +8,13 @@ import { HiOutlineLogout } from "react-icons/hi";
 import { IoIosArrowBack } from "react-icons/io";
 
 const NavBar = ({ isOpen, onClose }) => {
+
   return (
     <div
       className={`
         fixed top-0 right-0 h-full w-64 bg-[#fff] text-white z-40
         transform transition-transform duration-300 ease-in-out
-        ${isOpen ? 'translate-x-0' : 'translate-x-full'}
-      `}
+        ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}
     >
       {/* Close Icon */}
       <div className="flex justify-end p-4 pb-0">
@@ -34,14 +34,19 @@ const NavBar = ({ isOpen, onClose }) => {
           Profile
         </Link>
         <Link to="/notification" className="flex justify-left items-center relative text-[16px] text-[#292626] hover:text-[#FE0101] pl-[30px]" onClick={onClose}>
-        <IoNotificationsOutline className='absolute left-0' />
+          <IoNotificationsOutline className='absolute left-0' />
           Notifications
         </Link>
-        <Link to="/" className="flex justify-left items-center relative text-[16px] text-[#292626] hover:text-[#FE0101] pl-[30px]" onClick={onClose}>
-        <VscHistory className='absolute left-0' />
+        <Link to={`/history/${localStorage.getItem('user_uuid')}`} className="flex justify-left items-center relative text-[16px] text-[#292626] hover:text-[#FE0101] pl-[30px]" onClick={onClose}>
+          <VscHistory className='absolute left-0' />
           History
         </Link>
-        <Link to="/start" className="flex justify-left items-center relative text-[16px] text-[#292626] hover:text-[#FE0101] pl-[30px]" onClick={onClose}>
+        <Link to="/singin" className="flex justify-left items-center relative text-[16px] text-[#292626] hover:text-[#FE0101] pl-[30px]" onClick={() => {
+          localStorage.removeItem('access_token');
+          localStorage.removeItem('user_uuid');
+          localStorage.removeItem('user_phone');
+          onClose()
+        }}>
           <HiOutlineLogout className='absolute left-0' />
           Logout
         </Link>

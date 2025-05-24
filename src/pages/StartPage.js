@@ -5,7 +5,16 @@ const StartPage = () => {
   const navigate = useNavigate();
 
   const handleLogoClick = () => {
-    navigate('/singin');
+    const user_uuid = localStorage.getItem('user_uuid');
+    if (user_uuid) {
+      // If token exists, redirect to home page
+      navigate('/home');
+      return;
+    } else {
+      navigate('/singin');
+    }
+
+
   };
 
   return (

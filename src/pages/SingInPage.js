@@ -1,12 +1,18 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PhoneInput from '../components/Auth/PhoneInput';
 
 const SingInPage = () => {
   const navigate = useNavigate();
 
+  useEffect(() => {
+    if (localStorage.getItem('access_token')) {
+      navigate('/home');
+    }
+  }, [navigate])
+
   const handleSubmit = async (phone) => {
-     try {
+    try {
       const response = await fetch('http://localhost:3000/auth/request-otp', {
         method: 'POST',
         headers: {
