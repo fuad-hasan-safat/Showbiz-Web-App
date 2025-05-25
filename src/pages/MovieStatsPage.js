@@ -13,11 +13,14 @@ export default function MovieStatsPage() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const [videoData, setVideoData] = useState(null);
+  const [isLikedByUser, setIsLikedByUser] = useState(false);
 
   useEffect(() => {
     if (!localStorage.getItem('access_token')) {
       navigate('/singin');
     }
+
+
 
     // Reset state when contentID changes
     setVideoData(null);
@@ -34,6 +37,7 @@ export default function MovieStatsPage() {
     console.log("Content ID:", contentID);
     if (contentID) {
       getVideoData(contentID);
+      getIsLikedContent(contentID);
     }
 
     return () => {
@@ -46,7 +50,7 @@ export default function MovieStatsPage() {
         video.load();
       }
     };
-  }, [contentID]);
+  }, [contentID, isLikedByUser]);
 
   const getVideoData = async (contentID) => {
     const response = await fetch(
@@ -55,6 +59,19 @@ export default function MovieStatsPage() {
     const data = await response.json();
     setVideoData(data.data.data);
   };
+
+  const getIsLikedContent = async (contentID) => {
+    const response = await fetch(`${configs.API_BASE_PATH}/favorite/check-like/${localStorage.getItem('user_uuid')}/${contentID}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+      }
+    });
+    const data = await response.json();
+    console.log("Is liked content response:", data.isLiked);
+    setIsLikedByUser(data.isLiked);
+  }
 
   useEffect(() => {
     // Check if videoData is loaded
@@ -91,9 +108,9 @@ export default function MovieStatsPage() {
       updateStatus: videoData?.updateStatus || " ",
       videoLength: videoData?.videoLength || " ",
       shareCount: videoData?.shareCount || " ",
-      viewCount: videoData?.viewCount || " ",
+      viewCount: videoData?.viewCount + 1 || " ",
       likeCount: videoData?.likeCount || " ",
-      commentCount:   videoData?.commentCount || " ",
+      commentCount: videoData?.commentCount || " ",
       playlistId: videoData?.playlistId || " ",
       playlistName: videoData?.playlistName || " ",
       isPublished: videoData?.isPublished || false,
@@ -198,6 +215,27 @@ export default function MovieStatsPage() {
     trackMouse: true,
   });
 
+  const likehandaller = async () => {
+    if (!localStorage.getItem('access_token')) {
+      alert("Please login to like this content");
+      return;
+    }
+    const res = await fetch(`${configs.API_BASE_PATH}/favorite/create`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+      },
+      body: JSON.stringify({
+        userId: localStorage.getItem('user_uuid'),
+        contentId: contentID,
+      })
+    });
+    const data = await res.json();
+    console.log("Like handler response:", data);
+    setIsLikedByUser(data.isLiked);
+  }
+
 
   if (!videoData) {
     return (
@@ -266,17 +304,19 @@ export default function MovieStatsPage() {
 
           {/* Right side icons */}
           <div className="absolute bottom-20 right-10 flex flex-col items-center gap-5 text-white text-sm z-10">
-            <div className="flex flex-col items-center">
-              <FaHeart className="text-2xl text-[#FE2C55]" />
-              <span>250.5K</span>
-            </div>
+            <button
+              onClick={likehandaller}
+              className="flex flex-col items-center">
+              <FaHeart className={`text-2xl ${isLikedByUser ? 'text-[#FE2C55]' : 'text-[#ffffff]'} `} />
+              <span>{videoData.likeCount}</span>
+            </button>
             <div className="flex flex-col items-center">
               <FaCommentDots className="text-2xl" />
-              <span>100K</span>
+              <span>{videoData.commentCount}</span>
             </div>
             <div className="flex flex-col items-center">
               <FaShare className="text-2xl" />
-              <span>132.5K</span>
+              <span>{videoData.shareCount}</span>
             </div>
           </div>
 
