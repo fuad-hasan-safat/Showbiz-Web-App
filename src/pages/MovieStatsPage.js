@@ -56,6 +56,65 @@ export default function MovieStatsPage() {
     setVideoData(data.data.data);
   };
 
+  useEffect(() => {
+    // Check if videoData is loaded
+    if (videoData) {
+      console.log("Video data loaded:", videoData);
+      setVideoHistory();
+    } else {
+      console.log("Loading video data...");
+    }
+  }, [videoData]);
+
+
+  // call history API to get video data
+
+  const setVideoHistory = async () => {
+    if (!contentID || !localStorage.getItem('user_uuid')) return;
+
+    const apidata = {
+      userId: localStorage.getItem('user_uuid'),
+      userPhone: localStorage.getItem('user_phone'),
+      contentId: contentID,
+      contentName: videoData?.contentName || " ",
+      categoryName: videoData?.categoryName || " ",
+      categoryUUID: videoData?.categoryUUID || " ",
+      contentType: videoData?.contentType || " ",
+      description: videoData?.description || " ",
+      tags: videoData?.tags || " ",
+      filePath: videoData?.filePath || " ",
+      thumbnailPath: videoData?.thumbnailPath || " ",
+      isPremium: videoData?.isPremium || false,
+      artist: videoData?.artist || " ",
+      royalty: videoData?.royalty || " ",
+      publishStatus: videoData?.publishStatus || " ",
+      updateStatus: videoData?.updateStatus || " ",
+      videoLength: videoData?.videoLength || " ",
+      shareCount: videoData?.shareCount || " ",
+      viewCount: videoData?.viewCount || " ",
+      likeCount: videoData?.likeCount || " ",
+      commentCount:   videoData?.commentCount || " ",
+      playlistId: videoData?.playlistId || " ",
+      playlistName: videoData?.playlistName || " ",
+      isPublished: videoData?.isPublished || false,
+    }
+
+    console.log("Setting video history with data:", apidata);
+
+    const response = await fetch(`${configs.API_BASE_PATH}/history/create`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+      },
+      body: JSON.stringify(apidata)
+    });
+
+    const data = await response.json();
+    console.log("History set response:", data);
+
+  }
+
   // Load video with HLS support
   useEffect(() => {
     const video = videoRef.current;
@@ -93,22 +152,34 @@ export default function MovieStatsPage() {
     }
   };
 
-  // Track video progress
+  // Track video progress and play state
   useEffect(() => {
     const video = videoRef.current;
+    if (!video) return;
+
     const updateProgress = () => {
-      if (video?.duration) {
+      if (video.duration) {
         const percentage = (video.currentTime / video.duration) * 100;
         setProgress(percentage);
       }
     };
 
-    video?.addEventListener("timeupdate", updateProgress);
-    return () => {
-      video?.removeEventListener("timeupdate", updateProgress);
-    };
-  }, [contentID]);
+    const handlePlay = () => setIsPlaying(true);
+    const handlePause = () => setIsPlaying(false);
 
+    video.addEventListener('timeupdate', updateProgress);
+    video.addEventListener('play', handlePlay);
+    video.addEventListener('pause', handlePause);
+
+    // Initial state check
+    setIsPlaying(!video.paused);
+
+    return () => {
+      video.removeEventListener('timeupdate', updateProgress);
+      video.removeEventListener('play', handlePlay);
+      video.removeEventListener('pause', handlePause);
+    };
+  }, [contentID, videoData]);
 
   const swipeHandlers = useSwipeable({
     onSwipedLeft: async () => {
@@ -145,8 +216,8 @@ export default function MovieStatsPage() {
 
           {/* Background Video */}
           <video
-            controls={true}
-            autoPlay={false}
+            // controls={true}
+            autoPlay={true}
             playsInline={true}
             key={contentID} // This forces React to create new video element
             ref={videoRef}

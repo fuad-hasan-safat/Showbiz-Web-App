@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PhoneInput from '../components/Auth/PhoneInput';
+import { configs } from '../utils/constant';
 
 const SingInPage = () => {
   const navigate = useNavigate();
@@ -13,7 +14,7 @@ const SingInPage = () => {
 
   const handleSubmit = async (phone) => {
     try {
-      const response = await fetch('http://localhost:3000/auth/request-otp', {
+      const response = await fetch(`${configs.API_BASE_PATH}/auth/request-otp`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
