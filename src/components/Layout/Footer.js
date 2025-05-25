@@ -16,7 +16,7 @@ const Footer = () => {
   ];
 
   return (
-    <div className="bg-[#E9E9E9] py-3 px-6 mt-[100px]">
+    <div className="bg-[#E9E9E9] py-3 px-6 mt-[60px]">
       <div className="container">
         <div className="flex justify-between items-center">
           {menuItems.map(item => (

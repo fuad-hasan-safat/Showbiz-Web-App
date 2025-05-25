@@ -74,7 +74,7 @@ const HomePage = () => {
     return (
       <div key={`${playlistName}-${playlistUUID}`} className="mb-10 pl-[10px]">
         <div className="flex justify-between items-center mb-4 pl-[5px] pr-[20px]">
-          <h2 className="text-[20px] text-[#FE0101] font-semibold">{playlistName}</h2>
+          <h2 className="text-[20px] capitalize text-[#FE0101] font-semibold">{playlistName}</h2>
           <Link to={`/seeall/${playlistUUID}`} onClick={handleSeeAll}>
             <button className="flex justify-center items-center text-[14px] text-[#FE0101]">See All <FaAngleRight /></button>
           </Link>
@@ -109,20 +109,28 @@ const HomePage = () => {
       <Header />
       <div className="text-white min-h-screen pb-30">
         {/* Tabs */}
-        <div className="flex mb-5 gap-1 lg:gap-5 px-4">
-          {playlistNames.map((playlist, index) => (
-            <button
-              key={index}
-              className={`px-4 lg:px-8 md:px-8 sm:px-8 py-1 border-2 border-[#B8B8B8] rounded-full relative ${activeTab === index ? 'text-[#fff] border-[#FE0101] bg-[#FE0101]' : 'text-[#B8B8B8]'}`}
-              onClick={() => {
-                setActiveTab(index);
-                setSelectedPlaylist(playlist);
-              }}
-            >
-              {playlist}
-            </button>
-          ))}
+        <div className="relative max-w-[540px] w-full">
+          <div className="flex mb-5 gap-1 lg:gap-4 px-4 overflow-x-auto no-scrollbar">
+            {playlistNames.map((playlist, index) => (
+              <button
+                key={index}
+                className={`flex-shrink-0 px-4 lg:px-5 md:px-5 sm:px-5 py-1 capitalize border-2 border-[#B8B8B8] rounded-full whitespace-nowrap relative ${
+                  activeTab === index
+                    ? 'text-[#fff] border-[#FE0101] bg-[#FE0101]'
+                    : 'text-[#B8B8B8]'
+                }`}
+                onClick={() => {
+                  setActiveTab(index);
+                  setSelectedPlaylist(playlist);
+                }}
+              >
+                {playlist}
+              </button>
+            ))}
+          </div>
         </div>
+
+
 
         {/* Content */}
         <div className="space-y-8">

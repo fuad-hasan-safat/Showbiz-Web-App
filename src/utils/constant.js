@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 const { navigate } = require("react-router-dom");
 
 export const configs = {
-    API_BASE_PATH: "http://localhost:3000",
+    API_BASE_PATH: "http://192.168.88.149:3000",
 }
 
 
@@ -19,7 +19,16 @@ export const trandingSliderSettings = {
     slidesToScroll: 1,
     arrows: false,
     centerMode: false,
-    variableWidth: false
+    variableWidth: false,
+    responsive: [
+        {
+            breakpoint: 479,
+            settings: {
+                slidesToShow: 1.8,
+                slidesToScroll: 1
+            }
+        }
+    ]
 };
 
 export const ReleasesSliderSettings = {
@@ -137,7 +146,7 @@ const NewReleaseCard = ({ title, time, views, image, contentId }) => {
                 <img
                     src={`${configs.API_BASE_PATH}${image}`}
                     alt={title}
-                    className="w-full h-[250px] rounded-[15px] object-cover"
+                    className="w-full h-[240px] rounded-[15px] object-cover"
                     loading="lazy"
                     onError={(e) => {
                         e.target.src = '/fallback-image.jpg';
@@ -145,7 +154,7 @@ const NewReleaseCard = ({ title, time, views, image, contentId }) => {
                 />
                 <div className="flex justify-between mt-3 text-[10px] lg:text-[12px]">
                     <span className='bg-[#141414] flex justify-center items-center rounded-full px-[10px] py-1 text-[#999999] border-2 border-[#2b2b2b]'>
-                        <BiTime />{time}
+                        <BiTime className="pr-[2px]" />{time}
                     </span>
                     <span className='bg-[#141414] flex justify-center items-center rounded-full px-[10px] py-1 text-[#999999] border-2 border-[#2b2b2b]'>
                         <IoMdEye /> {views}
@@ -167,7 +176,7 @@ const EntertainmentCard = ({ title, dates, image, contentId }) => {
                 <img
                     src={`${configs.API_BASE_PATH}${image}`}
                     alt={title}
-                    className="w-full h-[250px] rounded-[15px] object-cover"
+                    className="w-full h-[240px] rounded-[15px] object-cover"
                     loading="lazy"
                     onError={(e) => {
                         e.target.src = '/fallback-image.jpg';
@@ -195,7 +204,7 @@ const LifestyleCard = ({ title, time, views, image, contentId }) => {
                 <img
                     src={`${configs.API_BASE_PATH}${image}`}
                     alt={title}
-                    className="w-full h-[250px] rounded-[15px] object-cover"
+                    className="w-full h-[235px] rounded-[15px] object-cover"
                     loading="lazy"
                     onError={(e) => {
                         e.target.src = '/fallback-image.jpg';
@@ -203,7 +212,7 @@ const LifestyleCard = ({ title, time, views, image, contentId }) => {
                 />
                 <div className="flex justify-between mt-3 text-[10px] lg:text-[12px]">
                     <span className='bg-[#141414] flex justify-center items-center rounded-full px-[8px] py-1 text-[#999999] border-2 border-[#2b2b2b]'>
-                        <BiTime /> {time}
+                        <BiTime className="pr-[2px]" /> {time}
                     </span>
                     <span className='bg-[#141414] flex justify-center items-center rounded-full px-[8px] py-1 text-[#999999] border-2 border-[#2b2b2b]'>
                         <IoStar className='text-[#FE0101]' />
