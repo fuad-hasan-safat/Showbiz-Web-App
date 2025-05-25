@@ -48,3 +48,13 @@ code {
 .slick-dots li.slick-active button:before{
   background: #FE0101 !important;
 }
+
+/* globals.css */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+

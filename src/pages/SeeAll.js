@@ -69,7 +69,7 @@ const SeeAll = () => {
                         <Link to='/home' className='flex justify-start items-center text-[#292626] hover:text-[#FE0101] cursor-help'>
                             <IoIosArrowBack /> Back
                         </Link>
-                        <h1 className="text-[20px] font-bold text-[#292626] mb-0">
+                        <h1 className="text-[20px] capitalize font-bold text-[#292626] mb-0">
                             {playlistDetails.playlistName || "Loading..."}
                         </h1>
                     </div>
@@ -82,7 +82,7 @@ const SeeAll = () => {
                         <p className="text-center text-gray-500">No data found</p>
                     ) : (
                         <>
-                            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4">
                                 {data.map((item, index) => {
                                     const CardComponent = playlistTypeComponents[playlistDetails.PlaylistType] || TrendingCard;
                                     const formateddate = new Date(item.created_at).toLocaleDateString('en-GB', {
