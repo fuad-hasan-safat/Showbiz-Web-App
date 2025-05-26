@@ -73,7 +73,7 @@ const VerificationPage = () => {
               </span>
             </p>
 
-            <VerificationPad onComplete={handleComplete} />
+            <VerificationPad phone={phoneNumber} onComplete={handleComplete} />
           </div>
         </div>
       </div>

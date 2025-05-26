@@ -2,9 +2,11 @@ import React, { useRef, useState, useEffect } from "react";
 import Hls from "hls.js";
 import { useSwipeable } from "react-swipeable";
 import { useNavigate } from "react-router-dom";
-import { FaHeart, FaCommentDots, FaShare } from "react-icons/fa";
+import { FaShare } from "react-icons/fa"; // FaHeart and FaCommentDots removed as they are in child components
 import { useParams } from "react-router-dom";
 import { configs } from "../utils/constant";
+import LikeButton from "../components/Movie/LikeButton"; // Import LikeButton
+import CommentButton from "../components/Movie/CommentButton"; // Import CommentButton
 
 export default function MovieStatsPage() {
   const { contentID } = useParams();
@@ -13,16 +15,12 @@ export default function MovieStatsPage() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const [videoData, setVideoData] = useState(null);
-  const [isLikedByUser, setIsLikedByUser] = useState(false);
+  const [isLikedByUser, setIsLikedByUser] = useState(false); // Still needed for initial prop to LikeButton
 
   useEffect(() => {
     if (!localStorage.getItem('access_token')) {
       navigate('/singin');
     }
-
-
-
-    // Reset state when contentID changes
     setVideoData(null);
     setProgress(0);
     setIsPlaying(false);
@@ -37,11 +35,10 @@ export default function MovieStatsPage() {
     console.log("Content ID:", contentID);
     if (contentID) {
       getVideoData(contentID);
-      getIsLikedContent(contentID);
+      getIsLikedContent(contentID); // Fetch initial liked status
     }
 
     return () => {
-      // Reset video data when component unmounts or contentID changes
       setVideoData(null);
       const video = videoRef.current;
       if (video) {
@@ -50,41 +47,68 @@ export default function MovieStatsPage() {
         video.load();
       }
     };
-  }, [contentID, isLikedByUser]);
+  }, [contentID, navigate]); // Added navigate to dependency array
 
   const getVideoData = async (contentID) => {
-    const response = await fetch(
-      `${configs.API_BASE_PATH}/publish/get-content/${contentID}?nocache=${Date.now()}`
-    );
-    const data = await response.json();
-    setVideoData(data.data.data);
+    try {
+      const response = await fetch(
+        // Corrected the API URL construction
+        `${configs.API_BASE_PATH}/publish/get-content/${contentID}?nocache=${Date.now()}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+        },
+      }
+      );
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      if (data && data.data && data.data.data) {
+        setVideoData(data.data.data);
+      } else {
+        console.error("Video data not found in response:", data);
+        setVideoData(null); // Ensure videoData is null if not found
+      }
+    } catch (error) {
+      console.error("Failed to fetch video data:", error);
+      setVideoData(null);
+    }
   };
 
   const getIsLikedContent = async (contentID) => {
-    const response = await fetch(`${configs.API_BASE_PATH}/favorite/check-like/${localStorage.getItem('user_uuid')}/${contentID}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+    try {
+      const response = await fetch(`${configs.API_BASE_PATH}/favorite/check-like/${localStorage.getItem('user_uuid')}/${contentID}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+        }
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
-    });
-    const data = await response.json();
-    console.log("Is liked content response:", data.isLiked);
-    setIsLikedByUser(data.isLiked);
+      const data = await response.json();
+      console.log("Is liked content response:", data.isLiked);
+      setIsLikedByUser(data.isLiked);
+    } catch (error) {
+      console.error("Failed to fetch liked status:", error);
+      setIsLikedByUser(false); // Default to false on error
+    }
   }
 
   useEffect(() => {
-    // Check if videoData is loaded
-    if (videoData) {
-      console.log("Video data loaded:", videoData);
+    if (videoData && contentID) { // Ensure videoData and contentID are present
+      console.log("Video data loaded, setting history:", videoData);
       setVideoHistory();
     } else {
-      console.log("Loading video data...");
+      console.log("Video data or contentID not available for history.");
     }
-  }, [videoData]);
+  }, [videoData, contentID]); // Depend on videoData and contentID
 
 
-  // call history API to get video data
+  // call history API to set video view
 
   const setVideoHistory = async () => {
     if (!contentID || !localStorage.getItem('user_uuid')) return;
@@ -200,13 +224,25 @@ export default function MovieStatsPage() {
 
   const swipeHandlers = useSwipeable({
     onSwipedLeft: async () => {
-      const res = await fetch(`${configs.API_BASE_PATH}/publish/get-content/${contentID}/next`);
+      const res = await fetch(`${configs.API_BASE_PATH}/publish/get-content/${contentID}/next`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+        },
+      });
       const next = await res.json();
       console.log("Next video:", next);
       if (next?.status) navigate(`/movie-stats/${next?.nextContentId}`);
     },
     onSwipedRight: async () => {
-      const res = await fetch(`${configs.API_BASE_PATH}/publish/get-content/${contentID}/previous`);
+      const res = await fetch(`${configs.API_BASE_PATH}/publish/get-content/${contentID}/previous`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+        },
+      });
       const prev = await res.json();
       console.log("Previous video:", prev);
       if (prev?.status) navigate(`/movie-stats/${prev?.previousContentId}`);
@@ -215,60 +251,54 @@ export default function MovieStatsPage() {
     trackMouse: true,
   });
 
-  const likehandaller = async () => {
-    if (!localStorage.getItem('access_token')) {
-      alert("Please login to like this content");
-      return;
-    }
-    const res = await fetch(`${configs.API_BASE_PATH}/favorite/create`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('access_token')}`
-      },
-      body: JSON.stringify({
-        userId: localStorage.getItem('user_uuid'),
-        contentId: contentID,
-      })
-    });
-    const data = await res.json();
-    console.log("Like handler response:", data);
-    setIsLikedByUser(data.isLiked);
-  }
+  // likehandaller and commentButtonHandler are removed as their logic is now in child components
 
+  // Callback for CommentButton to update comment count in videoData if needed for other parts of MovieStatsPage
+  // For now, we assume CommentButton handles its display independently.
+  // If MovieStatsPage needs to react to comment count changes (e.g., for other UI elements not part of CommentButton),
+  // we would pass a callback like this:
+  // const handleCommentAdded = () => {
+  //   setVideoData(prevData => ({
+  //     ...prevData,
+  //     commentCount: (prevData.commentCount || 0) + 1
+  //   }));
+  // };
+  // And pass it to <CommentButton onCommentAdded={handleCommentAdded} ... />
 
   if (!videoData) {
     return (
       <div className="container">
         <div className="flex justify-center items-center min-h-screen bg-black">
-          <p className="text-white text-lg">Video not found</p>
+          {/* Improved loading/error message */}
+          <p className="text-white text-lg">{contentID ? "Loading video..." : "Video not found"}</p>
         </div>
       </div>
     );
   }
 
-  return contentID && (
+  return contentID && videoData && ( // Ensure videoData is also available before rendering
     <div className="container">
       <div className="flex justify-center items-center min-h-screen bg-black">
         <div {...swipeHandlers} className="relative w-[100vw] h-[100vh] overflow-hidden">
 
           {/* Background Video */}
           <video
-            // controls={true}
+            // controls={true} // Consider if controls are needed or if custom controls are sufficient
             autoPlay={true}
             playsInline={true}
-            key={contentID} // This forces React to create new video element
+            key={contentID}
             ref={videoRef}
             className="w-full h-full object-cover"
             loop
           ></video>
 
-          {/* Add loading overlay */}
-          {!videoData && (
+          {/* Loading overlay - This might be redundant if the !videoData check above handles it */}
+          {/* Consider removing if the top-level !videoData check is sufficient */}
+          {/* {!videoData && (
             <div className="absolute inset-0 bg-black/80 flex items-center justify-center z-30">
               <p className="text-white">Loading...</p>
             </div>
-          )}
+          )} */}
 
           {/* Title */}
           <div className="absolute top-4 w-full text-center z-10">
@@ -302,21 +332,23 @@ export default function MovieStatsPage() {
             </div>
           )}
 
-          {/* Right side icons */}
+          {/* Right side icons - Using new components */}
           <div className="absolute bottom-20 right-10 flex flex-col items-center gap-5 text-white text-sm z-10">
-            <button
-              onClick={likehandaller}
-              className="flex flex-col items-center">
-              <FaHeart className={`text-2xl ${isLikedByUser ? 'text-[#FE2C55]' : 'text-[#ffffff]'} `} />
-              <span>{videoData.likeCount}</span>
-            </button>
-            <div className="flex flex-col items-center">
-              <FaCommentDots className="text-2xl" />
-              <span>{videoData.commentCount}</span>
-            </div>
-            <div className="flex flex-col items-center">
+            <LikeButton
+              contentID={contentID}
+              initialLikeCount={videoData.likeCount}
+              initialIsLikedByUser={isLikedByUser}
+              apiBasePath={configs.API_BASE_PATH}
+            />
+            <CommentButton
+              contentID={contentID}
+              initialCommentCount={videoData.commentCount}
+              apiBasePath={configs.API_BASE_PATH}
+              // onCommentAdded={handleCommentAdded} // Uncomment if MovieStatsPage needs to react to comment count
+            />
+            <div className="flex flex-col items-center"> {/* Share button remains */}
               <FaShare className="text-2xl" />
-              <span>{videoData.shareCount}</span>
+              <span>{videoData.shareCount === undefined || videoData.shareCount === null ? 0 : videoData.shareCount}</span>
             </div>
           </div>
 

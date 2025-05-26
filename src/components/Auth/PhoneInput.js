@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
+import { handleGetOtp } from '../../utils/functions';
+import { useNavigate } from 'react-router-dom';
 
 const PhoneInput = ({ onSubmit }) => {
   const [phone, setPhone] = useState('');
+  const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit(phone);
+   handleGetOtp(phone, navigate); 
   };
 
   return (

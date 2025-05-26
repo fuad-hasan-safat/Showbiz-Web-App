@@ -1,8 +1,11 @@
 import React, { useRef, useState } from 'react';
+import { handleGetOtp } from '../../utils/functions';
+import { useNavigate } from 'react-router-dom';
 
 const VerificationPad = ({ phone, onComplete }) => {
   const [code, setCode] = useState(['', '', '', '']);
   const inputsRef = useRef([]);
+  const navigate = useNavigate();
 
   const focusInput = (index) => {
     if (inputsRef.current[index]) {
@@ -86,7 +89,10 @@ const VerificationPad = ({ phone, onComplete }) => {
 
 
       <p className="mb-10 text-center text-[15px] text-[#0B0616]">
-        Don't receive your code? <span className="bg-gradient-to-r from-[#FB8408] to-[#FE0101] bg-clip-text text-transparent font-bold cursor-pointer">Resend</span>
+        Don't receive your code? 
+        <span
+        onClick={()=>handleGetOtp(phone, navigate)}
+         className="bg-gradient-to-r from-[#FB8408] to-[#FE0101] bg-clip-text text-transparent font-bold cursor-pointer">Resend</span>
       </p>
       <div className='bg-[#F3F3F6] pt-2 px-2 pb-[75px]'>
         <div className="grid grid-cols-3 gap-2 mb-2 leading-none">

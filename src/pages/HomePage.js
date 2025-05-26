@@ -34,7 +34,13 @@ const HomePage = () => {
 
   const fetchHomedata = async () => {
     try {
-      const response = await fetch(`${configs.API_BASE_PATH}/publish/grouped-by-playlist`);
+      const response = await fetch(`${configs.API_BASE_PATH}/publish/grouped-by-playlist`, {
+        method: 'GET',
+         headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+      },
+      });
       const data = await response.json();
 
       if (data.data) {
