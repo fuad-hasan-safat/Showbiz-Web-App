@@ -15,9 +15,6 @@ import useTrendingStore from '../store/trendingStore';
 const HomePage = () => {
   const [activeTab, setActiveTab] = useState(0);
   const [playlistNames, setPlaylistNames] = useState(["all"]);
-  const [selectedPlaylist, setSelectedPlaylist] = useState(null);
-  const [playlistTypes, setPlaylisTypes] = useState([]);
-  const [playlistUUIDs, setPlaylistUUIDs] = useState([]);
   const [homepagedata, setHomepageData] = useState(null);
 
   const setTrendingData = useTrendingStore((state) => state.setTrendingData);
@@ -47,8 +44,6 @@ const HomePage = () => {
 
         // Set state once after processing all playlists
         setPlaylistNames(names);
-        setPlaylisTypes(types);
-        setPlaylistUUIDs(uuids);
         setHomepageData(data.data)
       }
       console.log(data.data)
@@ -166,7 +161,6 @@ const HomePage = () => {
                 className={`px-4 lg:px-8 md:px-8 sm:px-8 py-1 border-2 border-[#B8B8B8] rounded-full relative ${activeTab === index ? 'text-[#fff] border-[#FE0101] bg-[#FE0101]' : 'text-[#B8B8B8]'}`}
                 onClick={() => {
                   setActiveTab(index);
-                  setSelectedPlaylist(playlist)
                 }}
               >
                 {playlist}
@@ -182,7 +176,7 @@ const HomePage = () => {
             <>
               {/* Tranding Slider */}
               {homepagedata && homepagedata.map((homedata, index) => {
-                const { playlistName, playlistUUID, playlistType, items } = homedata
+                const { playlistName, playlistType, items } = homedata
                 const CardComponent = playlistTypeComponents[playlistType] || TrendingCard;
                 const sliderSettingsComponent = sliderSettings[playlistType] || trandingSliderSettings;
                 console.log({ items })

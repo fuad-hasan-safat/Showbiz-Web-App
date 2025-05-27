@@ -24,7 +24,7 @@ const NavBar = ({ isOpen, onClose }) => {
       </div>
 
       <div className="flex justify-start border-b-2 border-[#ddd] p-4">
-        <Link to='/' className='flex justify-start items-center text-[#292626] hover:text-[#FE0101]'><IoIosArrowBack /> Back</Link>
+         <button onClick={onClose}  className='flex justify-start items-center text-[#292626] hover:text-[#FE0101]'><IoIosArrowBack /> Back</button>
       </div>
 
       {/* Navigation Links */}
@@ -33,10 +33,10 @@ const NavBar = ({ isOpen, onClose }) => {
           <CiUser className='absolute left-0' />
           Profile
         </Link>
-        <Link to="/notification" className="flex justify-left items-center relative text-[16px] text-[#292626] hover:text-[#FE0101] pl-[30px]" onClick={onClose}>
+        {/* <Link to="/notification" className="flex justify-left items-center relative text-[16px] text-[#292626] hover:text-[#FE0101] pl-[30px]" onClick={onClose}>
           <IoNotificationsOutline className='absolute left-0' />
           Notifications
-        </Link>
+        </Link> */}
         <Link to={`/history/${localStorage.getItem('user_uuid')}`} className="flex justify-left items-center relative text-[16px] text-[#292626] hover:text-[#FE0101] pl-[30px]" onClick={onClose}>
           <VscHistory className='absolute left-0' />
           History

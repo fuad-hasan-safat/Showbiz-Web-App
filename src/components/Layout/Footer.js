@@ -9,9 +9,9 @@ const Footer = () => {
   const location = useLocation();
 
   const menuItems = [
-    { id: 'home', icon: <CiHome size={30} />, path: '/' },
-    { id: 'search', icon: <IoSearch size={30} />, path: '/' },
-    { id: 'time', icon: <IoMdTime size={30} />, path: '/' },
+    { id: 'home', icon: <CiHome size={30} />, path: '/home' },
+    { id: 'search', icon: <IoSearch size={30} />, path: '/search  ' },
+    { id: 'time', icon: <IoMdTime size={30} />, path: `/history/${localStorage.getItem('user_uuid')}` },
     { id: 'user', icon: <FiUser size={30} />, path: '/Profile' },
   ];
 

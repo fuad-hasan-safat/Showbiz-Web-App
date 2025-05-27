@@ -157,7 +157,7 @@ const ProfileEdit = () => {
             <div className="min-h-screen bg-white p-4">
                 {/* Header */}
                 <div className="flex items-center justify-between pb-5 mb-10 border-b-2 border-[#ddd]">
-                    <Link to='/' className='flex justify-start items-center text-[#292626] hover:text-[#FE0101]'><IoIosArrowBack className='hover:text-[#FE0101]' /> Back</Link>
+                    <Link to='/home' className='flex justify-start items-center text-[#292626] hover:text-[#FE0101]'><IoIosArrowBack className='hover:text-[#FE0101]' /> Back</Link>
                     <h2 className="text-xl font-semibold text-center w-full -ml-10">Profile</h2>
                 </div>
 

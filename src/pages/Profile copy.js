@@ -42,7 +42,7 @@ const ProfileEdit = () => {
     }
   };
 
-  const profileName = userdata?.name ? userdata?.name : 'Rajib Sa';
+  
   const profileImage = userdata?.image ? `${configs.API_BASE_PATH}${userdata.profile_image}` : 'https://i.ibb.co/4pDNDk1/avatar.png';
 
   return userdata &&(

@@ -17,9 +17,6 @@ const HomePage = () => {
   const [activeTab, setActiveTab] = useState(0);
   const navigate = useNavigate();
   const [playlistNames, setPlaylistNames] = useState(["all"]);
-  const [selectedPlaylist, setSelectedPlaylist] = useState(null);
-  const [playlistTypes, setPlaylisTypes] = useState([]);
-  const [playlistUUIDs, setPlaylistUUIDs] = useState([]);
   const [homepagedata, setHomepageData] = useState(null);
 
   const setTrendingData = useTrendingStore((state) => state.setTrendingData);
@@ -55,8 +52,6 @@ const HomePage = () => {
         });
 
         setPlaylistNames(names);
-        setPlaylisTypes(types);
-        setPlaylistUUIDs(uuids);
         setHomepageData(data.data);
       }
       console.log(data.data);
@@ -127,7 +122,6 @@ const HomePage = () => {
                 }`}
                 onClick={() => {
                   setActiveTab(index);
-                  setSelectedPlaylist(playlist);
                 }}
               >
                 {playlist}

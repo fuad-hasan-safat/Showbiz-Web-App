@@ -105,8 +105,7 @@ export default function MovieStatsPage() {
     } else {
       console.log("Video data or contentID not available for history.");
     }
-  }, [videoData, contentID]); // Depend on videoData and contentID
-
+  }, [videoData, contentID]);
 
   // call history API to set video view
 
@@ -179,8 +178,6 @@ export default function MovieStatsPage() {
       }
     };
   }, [videoData]);
-
-
 
   const handlePlayPause = () => {
     const video = videoRef.current;

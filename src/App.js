@@ -18,6 +18,8 @@ import SeeAll from './pages/SeeAll';
 import ProfileEdit from './pages/Profile';
 import Notification from './pages/Notification';
 import SingInPage from './pages/SingInPage';
+import History from './pages/History';
+import Search from './pages/Search';
 
 function App() {
   return (
@@ -32,7 +34,9 @@ function App() {
         <Route path="/home" element={<HomePage />} />
         <Route path="/movie-stats/:contentID" element={<MovieStatsPage />} />
         <Route path="/seeall/:playlistUUID" element={<SeeAll />} />
+        <Route path="/history/:userId" element={<History/>} />
         <Route path="/profile" element={<ProfileEdit />} />
+         <Route path="/search" element={<Search />} />
         <Route path="/notification" element={<Notification />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
