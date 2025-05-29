@@ -275,8 +275,8 @@ export default function MovieStatsPage() {
 
   return contentID && videoData && ( // Ensure videoData is also available before rendering
     <div className="container">
-      <div className="flex justify-center items-center relative min-h-screen">
-        <div {...swipeHandlers} className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[360px] h-[640px]">
+      <div className="flex justify-center items-center relative">
+        <div {...swipeHandlers} className=" absolute top-[50%] w-[360px] h-[640px]">
 
           {/* Background Video */}
           <video
@@ -350,7 +350,7 @@ export default function MovieStatsPage() {
           </div>
 
           {/* Progress Bar */}
-          <div className="absolute bottom-0 left-0 w-full h-[6px] bg-[#000] z-20">
+          <div className="absolute bottom-0 left-0 w-full h-[6px] bg-[#fff] z-20">
             <div
               className="h-full bg-[#FE2C55] transition-all duration-100 ease-linear"
               style={{ width: `${progress}%` }}
