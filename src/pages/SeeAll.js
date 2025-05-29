@@ -99,7 +99,7 @@ const SeeAll = () => {
                                             subtitle={item.categoryName}
                                             image={item.thumbnailPath}
                                             time={`${Math.floor(item.videoLength / 60)}h ${item.videoLength % 60}min`}
-                                            views={`${item.viewCount}K`}
+                                            views={`${item.viewCount/1000}K`}
                                             dates={`${formateddate}`}
                                         />
                                     );
