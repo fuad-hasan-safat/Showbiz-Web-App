@@ -5,6 +5,7 @@ import { IoIosArrowBack } from "react-icons/io";
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { configs, playlistTypeComponents, sliderSettings, trandingSliderSettings, TrendingCard } from '../utils/constant';
+import { playlistTypeComponentsSeeAll, TrendingCardSeeAll } from '../utils/SeeallCards';
 
 const SeeAll = () => {
     const { playlistUUID } = useParams();
@@ -84,7 +85,7 @@ const SeeAll = () => {
                         <>
                             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4">
                                 {data.map((item, index) => {
-                                    const CardComponent = playlistTypeComponents[playlistDetails.PlaylistType] || TrendingCard;
+                                    const CardComponent = playlistTypeComponentsSeeAll[playlistDetails.PlaylistType] || TrendingCardSeeAll;
                                     const formateddate = new Date(item.created_at).toLocaleDateString('en-GB', {
                                         day: 'numeric',
                                         month: 'long',
