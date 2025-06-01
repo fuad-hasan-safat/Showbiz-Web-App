@@ -6,6 +6,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { configs, playlistTypeComponents, sliderSettings, trandingSliderSettings, TrendingCard } from '../utils/constant';
 import { playlistTypeComponentsSeeAll, TrendingCardSeeAll } from '../utils/SeeallCards';
+import { Helmet } from 'react-helmet';
 
 const SeeAll = () => {
     const { playlistUUID } = useParams();
@@ -63,6 +64,7 @@ const SeeAll = () => {
 
     return (
         <div className='container'>
+
             <div className="bg-white min-h-screen">
                 <Header />
                 <div className="p-4">
@@ -83,6 +85,13 @@ const SeeAll = () => {
                         <p className="text-center text-gray-500">No data found</p>
                     ) : (
                         <>
+                            <Helmet>
+                                <title>{playlistDetails.playlistName}</title>
+                                <meta name="description" content="This is showbiz portal" />
+                                <meta property="og:title" content={`${playlistDetails.playlistName}`} />
+                                {/* <meta property="og:image" content="https://example.com/image.jpg" /> */}
+                                {/* Add more meta tags as needed */}
+                            </Helmet>
                             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4">
                                 {data.map((item, index) => {
                                     const CardComponent = playlistTypeComponentsSeeAll[playlistDetails.PlaylistType] || TrendingCardSeeAll;
@@ -100,7 +109,7 @@ const SeeAll = () => {
                                             subtitle={item.categoryName}
                                             image={item.thumbnailPath}
                                             time={`${Math.floor(item.videoLength / 60)}h ${item.videoLength % 60}min`}
-                                            views={`${item.viewCount/1000}K`}
+                                            views={`${item.viewCount / 1000}K`}
                                             dates={`${formateddate}`}
                                         />
                                     );

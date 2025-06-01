@@ -6,6 +6,7 @@ import Header from '../components/Layout/Header';
 import Footer from '../components/Layout/Footer';
 import { Link, useNavigate } from 'react-router-dom';
 import { configs } from '../utils/constant';
+import { Helmet } from 'react-helmet';
 
 const ProfileEdit = () => {
     const fileInputRef = useRef(null);
@@ -152,6 +153,13 @@ const ProfileEdit = () => {
 
     return userdata && (
         <div className='container bg-white'>
+            <Helmet>
+                <title>{userdata.name}</title>
+                <meta name="description" content="This is showbiz portal" />
+                <meta property="og:title" content={`${userdata.name}`} />
+                {/* <meta property="og:image" content="https://example.com/image.jpg" /> */}
+                {/* Add more meta tags as needed */}
+            </Helmet>
             <Header />
             <Toast />
             <div className="min-h-screen bg-white p-4">

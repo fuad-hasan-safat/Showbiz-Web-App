@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import VerificationPad from '../components/Auth/VerificationPad';
 import { configs } from '../utils/constant';
+import { Helmet } from 'react-helmet';
 
 const VerificationPage = () => {
   const location = useLocation();
@@ -51,6 +52,13 @@ const VerificationPage = () => {
 
   return (
     <div className='container'>
+      <Helmet>
+        <title>Showbiz Login</title>
+        <meta name="description" content="This is showbiz portal" />
+        <meta property="og:title" content="Showbiz Login" />
+        {/* <meta property="og:image" content="https://example.com/image.jpg" /> */}
+        {/* Add more meta tags as needed */}
+      </Helmet>
       <div className="min-h-screen bg-gradient-to-b from-orange-200/70 to-white relative">
         <div
           className="absolute top-0 left-0 w-full h-[100%] bg-cover bg-center z-0"

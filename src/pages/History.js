@@ -4,6 +4,7 @@ import Header from '../components/Layout/Header';
 import { IoIosArrowBack } from 'react-icons/io';
 import Footer from '../components/Layout/Footer';
 import { configs } from '../utils/constant';
+import { Helmet } from 'react-helmet';
 
 const History = () => {
     const { userId } = useParams();
@@ -30,6 +31,13 @@ const History = () => {
 
     return (
         <div className="container bg-white">
+            <Helmet>
+                <title>You History</title>
+                <meta name="description" content="This is showbiz portal" />
+                <meta property="og:title" content="Showbiz History" />
+                {/* <meta property="og:image" content="https://example.com/image.jpg" /> */}
+                {/* Add more meta tags as needed */}
+            </Helmet>
             <Header />
             <div className="min-h-screen bg-white p-4">
                 {/* Header Section */}
@@ -43,9 +51,9 @@ const History = () => {
                 <div className="space-y-4">
                     {historyItems.length > 0 ? (
                         historyItems.map((item) => (
-                            <div key={item.id} 
-                            onClick={()=> navigate(`/movie-stats/${item.contentId}`)}
-                            className="flex bg-[#FDF8F8] rounded-lg p-2 h-[90px] cursor-pointer">
+                            <div key={item.id}
+                                onClick={() => navigate(`/movie-stats/${item.contentId}`)}
+                                className="flex bg-[#FDF8F8] rounded-lg p-2 h-[90px] cursor-pointer">
                                 {/* Thumbnail */}
                                 <img
                                     src={`${configs.API_BASE_PATH}${item.thumbnailPath}`}

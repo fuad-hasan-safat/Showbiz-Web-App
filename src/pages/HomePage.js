@@ -12,6 +12,7 @@ import Footer from '../components/Layout/Footer';
 import Header from '../components/Layout/Header';
 import useTrendingStore from '../store/trendingStore';
 import { configs, playlistTypeComponents, sliderSettings, trandingSliderSettings, TrendingCard } from '../utils/constant';
+import { Helmet } from 'react-helmet';
 
 const HomePage = () => {
   const [activeTab, setActiveTab] = useState(0);
@@ -33,10 +34,10 @@ const HomePage = () => {
     try {
       const response = await fetch(`${configs.API_BASE_PATH}/publish/grouped-by-playlist`, {
         method: 'GET',
-         headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('access_token')}`
-      },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+        },
       });
       const data = await response.json();
 
@@ -70,10 +71,17 @@ const HomePage = () => {
 
   const renderPlaylistSlider = (homedata) => {
     const { playlistName, playlistType, playlistUUID, items } = homedata;
-    const CardComponent = playlistTypeComponents[playlistType] ;
-    const sliderSettingsComponent = sliderSettings[playlistType] ;
+    const CardComponent = playlistTypeComponents[playlistType];
+    const sliderSettingsComponent = sliderSettings[playlistType];
     return (
       <div key={`${playlistName}-${playlistUUID}`} className="mb-10 pl-[10px]">
+        <Helmet>
+          <title>Showbiz Home</title>
+          <meta name="description" content="This is showbiz portal" />
+          <meta property="og:title" content="Showbiz Home" />
+          {/* <meta property="og:image" content="https://example.com/image.jpg" /> */}
+          {/* Add more meta tags as needed */}
+        </Helmet>
         <div className="flex justify-between items-center mb-4 pl-[5px] pr-[20px]">
           <h2 className="text-[20px] capitalize text-[#FE0101] font-semibold">{playlistName}</h2>
           <Link to={`/seeall/${playlistUUID}`} onClick={handleSeeAll}>
@@ -94,7 +102,7 @@ const HomePage = () => {
                 subtitle={item.categoryName}
                 image={item.thumbnailPath}
                 time={`${Math.floor(item.videoLength / 60)}h ${item.videoLength % 60}min`}
-                views={`${item.viewCount/1000}K`}
+                views={`${item.viewCount / 1000}K`}
                 dates={`${formateddate}`}
                 contentId={item.contentId}
               />
@@ -115,11 +123,10 @@ const HomePage = () => {
             {playlistNames.map((playlist, index) => (
               <button
                 key={index}
-                className={`flex-shrink-0 px-4 lg:px-5 md:px-5 sm:px-5 py-1 capitalize border-2 border-[#B8B8B8] rounded-full whitespace-nowrap relative ${
-                  activeTab === index
+                className={`flex-shrink-0 px-4 lg:px-5 md:px-5 sm:px-5 py-1 capitalize border-2 border-[#B8B8B8] rounded-full whitespace-nowrap relative ${activeTab === index
                     ? 'text-[#fff] border-[#FE0101] bg-[#FE0101]'
                     : 'text-[#B8B8B8]'
-                }`}
+                  }`}
                 onClick={() => {
                   setActiveTab(index);
                 }}
