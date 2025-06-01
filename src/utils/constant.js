@@ -15,16 +15,16 @@ export const trandingSliderSettings = {
     dots: false,
     infinite: false,
     speed: 500,
-    slidesToShow: 2.7,
+    slidesToShow: 1.8,
     slidesToScroll: 1,
     arrows: false,
     centerMode: false,
     variableWidth: false,
     responsive: [
         {
-            breakpoint: 479,
+            breakpoint: 480,
             settings: {
-                slidesToShow: 2.2,
+                slidesToShow: 1.7,
                 slidesToScroll: 1
             }
         }
@@ -35,14 +35,14 @@ export const ReleasesSliderSettings = {
     dots: true,
     infinite: false,
     speed: 500,
-    slidesToShow: 2.3,
+    slidesToShow: 1.8,
     slidesToScroll: 1,
     arrows: false,
     centerMode: false,
     variableWidth: false,
     responsive: [
         {
-            breakpoint: 479,
+            breakpoint: 480,
             settings: {
                 slidesToShow: 1.7,
                 slidesToScroll: 1
@@ -55,14 +55,14 @@ export const entertainmentSliderSettings = {
     dots: true,
     infinite: false,
     speed: 500,
-    slidesToShow: 2.3,
+    slidesToShow: 1.8,
     slidesToScroll: 1,
     arrows: false,
     centerMode: false,
     variableWidth: false,
     responsive: [
         {
-            breakpoint: 479,
+            breakpoint: 480,
             settings: {
                 slidesToShow: 1.7,
                 slidesToScroll: 1
@@ -75,14 +75,14 @@ export const lifestyleSliderSettings = {
     dots: true,
     infinite: false,
     speed: 500,
-    slidesToShow: 2.3,
+    slidesToShow: 1.8,
     slidesToScroll: 1,
     arrows: false,
     centerMode: false,
     variableWidth: false,
     responsive: [
         {
-            breakpoint: 479,
+            breakpoint: 480,
             settings: {
                 slidesToShow: 1.7,
                 slidesToScroll: 1
@@ -108,11 +108,11 @@ export const TrendingCard = ({ title, subtitle, image, contentId, multiLine = fa
 
     return (
         <CardWrapper contentId={contentId}>
-            <div className="rounded-[15px] relative overflow-hidden h-[250px]">
+            <div className="rounded-[15px] relative overflow-hidden">
                 <img
                     src={`${configs.API_BASE_PATH}${image}`}
                     alt={title}
-                    className="w-full h-full rounded-[15px] object-cover"
+                    className="w-full h-[280px] rounded-[15px] object-cover"
                     loading="lazy"
                     onError={(e) => {
                         e.target.src = '/fallback-image.jpg';
@@ -146,7 +146,7 @@ const NewReleaseCard = ({ title, time, views, image, contentId }) => {
                 <img
                     src={`${configs.API_BASE_PATH}${image}`}
                     alt={title}
-                    className="w-full h-[240px] rounded-[15px] object-cover"
+                    className="w-full h-[220px] rounded-[15px] object-cover"
                     loading="lazy"
                     onError={(e) => {
                         e.target.src = '/fallback-image.jpg';
@@ -176,7 +176,7 @@ const EntertainmentCard = ({ title, dates, image, contentId }) => {
                 <img
                     src={`${configs.API_BASE_PATH}${image}`}
                     alt={title}
-                    className="w-full h-[240px] rounded-[15px] object-cover"
+                    className="w-full h-[220px] rounded-[15px] object-cover"
                     loading="lazy"
                     onError={(e) => {
                         e.target.src = '/fallback-image.jpg';
@@ -200,11 +200,11 @@ const LifestyleCard = ({ title, time, views, image, contentId }) => {
 
     return (
         <CardWrapper contentId={contentId}>
-            <div className="bg-[#292626] border-2 border-[#262626] rounded-[10px] overflow-hidden h-[303px] p-3">
+            <div className="bg-[#292626] border-2 border-[#262626] rounded-[10px] overflow-hidden p-3">
                 <img
                     src={`${configs.API_BASE_PATH}${image}`}
                     alt={title}
-                    className="w-full h-[235px] rounded-[15px] object-cover"
+                    className="w-full h-[220px] rounded-[15px] object-cover"
                     loading="lazy"
                     onError={(e) => {
                         e.target.src = '/fallback-image.jpg';

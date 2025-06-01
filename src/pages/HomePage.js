@@ -116,7 +116,8 @@ const HomePage = () => {
   return (
     <div className='container bg-[#fff]'>
       <Header />
-      <div className="text-white min-h-screen pb-30">
+      <div className="text-white min-h-screen">
+        <div className='pb-28'>
         {/* Tabs */}
         <div className="relative max-w-[540px] w-full">
           <div className="flex mb-5 gap-1 lg:gap-4 px-4 overflow-x-auto no-scrollbar">
@@ -150,6 +151,7 @@ const HomePage = () => {
           {homepagedata && activeTab !== 0 && activeTab <= homepagedata.length && (
             renderPlaylistSlider(homepagedata[activeTab - 1])
           )}
+        </div>
         </div>
       </div>
       <Footer />

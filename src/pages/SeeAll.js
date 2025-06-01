@@ -67,7 +67,7 @@ const SeeAll = () => {
 
             <div className="bg-white min-h-screen">
                 <Header />
-                <div className="p-4">
+                <div className="px-4 pb-28">
                     <div className='flex justify-between items-center mb-5'>
                         <Link to='/home' className='flex justify-start items-center text-[#292626] hover:text-[#FE0101] cursor-help'>
                             <IoIosArrowBack /> Back
@@ -92,7 +92,7 @@ const SeeAll = () => {
                                 {/* <meta property="og:image" content="https://example.com/image.jpg" /> */}
                                 {/* Add more meta tags as needed */}
                             </Helmet>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4">
+                            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 gap-4">
                                 {data.map((item, index) => {
                                     const CardComponent = playlistTypeComponentsSeeAll[playlistDetails.PlaylistType] || TrendingCardSeeAll;
                                     const formateddate = new Date(item.created_at).toLocaleDateString('en-GB', {

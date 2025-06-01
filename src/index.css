@@ -18,7 +18,8 @@ code {
     monospace;
 }
 .container{
-  max-width: 575px;
+  /* max-width: 575px; */
+  max-width: 479px;
   width: 100%;
   margin: 0 auto;
 }
