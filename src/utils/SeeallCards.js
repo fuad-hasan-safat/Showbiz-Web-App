@@ -6,7 +6,7 @@ import { configs } from "./constant";
 const { navigate } = require("react-router-dom");
 
 const CardWrapperSeeAll = ({ children, contentId }) => (
-    <div className="px-2">
+    <div className="">
         <Link to={`/movie-stats/${contentId}`} className="block h-full">
             {children}
         </Link>
@@ -31,7 +31,7 @@ export const TrendingCardSeeAll = ({ title, subtitle, image, contentId, multiLin
                         e.target.src = '/fallback-image.jpg';
                     }}
                 />
-                <div className="p-3 absolute bottom-3 left-0 right-0 text-center">
+                <div className="p-2 absolute bottom-3 left-0 right-0 text-center">
                     {multiLine ? (
                         title.split('\n').map((line, i) => (
                             <h4 key={i} className="text-[12px] lg:text-[14px] text-white font-medium">{line}</h4>
@@ -59,7 +59,7 @@ const NewReleaseCardSeeAll = ({ title, time, views, image, contentId }) => {
                 <img
                     src={`${configs.API_BASE_PATH}${image}`}
                     alt={title}
-                    className="w-full h-[240px] rounded-[15px] object-cover"
+                    className="w-full h-[200px] rounded-[15px] object-cover"
                     loading="lazy"
                     onError={(e) => {
                         e.target.src = '/fallback-image.jpg';
@@ -89,7 +89,7 @@ const EntertainmentCardSeeAll = ({ title, dates, image, contentId }) => {
                 <img
                     src={`${configs.API_BASE_PATH}${image}`}
                     alt={title}
-                    className="w-full h-[240px] rounded-[15px] object-cover"
+                    className="w-full h-[200px] rounded-[15px] object-cover"
                     loading="lazy"
                     onError={(e) => {
                         e.target.src = '/fallback-image.jpg';
@@ -113,21 +113,21 @@ const LifestyleCardSeeAll = ({ title, time, views, image, contentId }) => {
 
     return (
         <CardWrapperSeeAll contentId={contentId}>
-            <div className="bg-[#292626] border-2 border-[#262626] rounded-[10px] overflow-hidden h-[303px] p-3">
+            <div className="bg-[#292626] border-2 border-[#262626] rounded-[10px] overflow-hidden p-3">
                 <img
                     src={`${configs.API_BASE_PATH}${image}`}
                     alt={title}
-                    className="w-full h-[235px] rounded-[15px] object-cover"
+                    className="w-full h-[200px] rounded-[15px] object-cover"
                     loading="lazy"
                     onError={(e) => {
                         e.target.src = '/fallback-image.jpg';
                     }}
                 />
-                <div className="flex justify-between mt-3 text-[10px] lg:text-[12px]">
-                    <span className='bg-[#141414] flex justify-center items-center rounded-full px-[8px] py-1 text-[#999999] border-2 border-[#2b2b2b]'>
+                <div className="flex justify-between mt-3 text-[8px] lg:text-[12px]">
+                    <span className='bg-[#141414] flex justify-center items-center rounded-full px-[6px] py-1 text-[#999999] border-2 border-[#2b2b2b]'>
                         <BiTime className="pr-[2px]" /> {time}
                     </span>
-                    <span className='bg-[#141414] flex justify-center items-center rounded-full px-[8px] py-1 text-[#999999] border-2 border-[#2b2b2b]'>
+                    <span className='bg-[#141414] flex justify-center items-center rounded-full px-[6px] py-1 text-[#999999] border-2 border-[#2b2b2b]'>
                         <IoStar className='text-[#FE0101]' />
                         <IoStar className='text-[#FE0101]' />
                         <IoStar className='text-[#FE0101]' />

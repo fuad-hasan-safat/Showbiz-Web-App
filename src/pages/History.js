@@ -32,6 +32,7 @@ const History = () => {
         <div className="container bg-white">
             <Header />
             <div className="min-h-screen bg-white p-4">
+              <div className='pb-24'>
                 {/* Header Section */}
                 <div className="flex items-center justify-between mb-4">
                     <Link to="/home" className="flex justify-start items-center text-[#292626] hover:text-[#FE0101]">
@@ -70,6 +71,7 @@ const History = () => {
                         <p className="text-gray-600">No history items available.</p>
                     )}
                 </div>
+            </div>
             </div>
             <Footer />
         </div>

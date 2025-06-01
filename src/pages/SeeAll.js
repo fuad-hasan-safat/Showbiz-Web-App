@@ -65,7 +65,7 @@ const SeeAll = () => {
         <div className='container'>
             <div className="bg-white min-h-screen">
                 <Header />
-                <div className="p-4">
+                <div className="px-4 pb-28">
                     <div className='flex justify-between items-center mb-5'>
                         <Link to='/home' className='flex justify-start items-center text-[#292626] hover:text-[#FE0101] cursor-help'>
                             <IoIosArrowBack /> Back
@@ -83,7 +83,7 @@ const SeeAll = () => {
                         <p className="text-center text-gray-500">No data found</p>
                     ) : (
                         <>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4">
+                            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 gap-4">
                                 {data.map((item, index) => {
                                     const CardComponent = playlistTypeComponentsSeeAll[playlistDetails.PlaylistType] || TrendingCardSeeAll;
                                     const formateddate = new Date(item.created_at).toLocaleDateString('en-GB', {
