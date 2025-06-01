@@ -7,7 +7,6 @@ import { useParams } from "react-router-dom";
 import { configs } from "../utils/constant";
 import LikeButton from "../components/Movie/LikeButton"; // Import LikeButton
 import CommentButton from "../components/Movie/CommentButton"; // Import CommentButton
-import { Helmet } from "react-helmet";
 
 export default function MovieStatsPage() {
   const { contentID } = useParams();
@@ -276,15 +275,8 @@ export default function MovieStatsPage() {
 
   return contentID && videoData && ( // Ensure videoData is also available before rendering
     <div className="container">
-      <Helmet>
-        <title>{videoData.contentName}</title>
-        <meta name="description" content="This is showbiz portal" />
-        <meta property="og:title" content={`${videoData.contentName}`} />
-        {/* <meta property="og:image" content="https://example.com/image.jpg" /> */}
-        {/* Add more meta tags as needed */}
-      </Helmet>
-      <div className="flex justify-center items-center relative min-h-screen">
-        <div {...swipeHandlers} className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[360px] h-[640px]">
+      <div className="flex justify-center items-center relative">
+        <div {...swipeHandlers} className=" absolute top-[50%] w-[360px] h-[640px]">
 
           {/* Background Video */}
           <video
@@ -349,7 +341,7 @@ export default function MovieStatsPage() {
               contentID={contentID}
               initialCommentCount={videoData.commentCount}
               apiBasePath={configs.API_BASE_PATH}
-            // onCommentAdded={handleCommentAdded} // Uncomment if MovieStatsPage needs to react to comment count
+              // onCommentAdded={handleCommentAdded} // Uncomment if MovieStatsPage needs to react to comment count
             />
             <div className="flex flex-col items-center"> {/* Share button remains */}
               <FaShare className="text-2xl" />
@@ -358,7 +350,7 @@ export default function MovieStatsPage() {
           </div>
 
           {/* Progress Bar */}
-          <div className="absolute bottom-0 left-0 w-full h-[6px] bg-[#000] z-20">
+          <div className="absolute bottom-0 left-0 w-full h-[6px] bg-[#fff] z-20">
             <div
               className="h-full bg-[#FE2C55] transition-all duration-100 ease-linear"
               style={{ width: `${progress}%` }}

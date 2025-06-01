@@ -24,7 +24,7 @@ export const trandingSliderSettings = {
         {
             breakpoint: 479,
             settings: {
-                slidesToShow: 1.8,
+                slidesToShow: 2.2,
                 slidesToScroll: 1
             }
         }
@@ -44,7 +44,7 @@ export const ReleasesSliderSettings = {
         {
             breakpoint: 479,
             settings: {
-                slidesToShow: 1.8,
+                slidesToShow: 1.7,
                 slidesToScroll: 1
             }
         }
@@ -64,7 +64,7 @@ export const entertainmentSliderSettings = {
         {
             breakpoint: 479,
             settings: {
-                slidesToShow: 1.8,
+                slidesToShow: 1.7,
                 slidesToScroll: 1
             }
         }
@@ -84,7 +84,7 @@ export const lifestyleSliderSettings = {
         {
             breakpoint: 479,
             settings: {
-                slidesToShow: 1.8,
+                slidesToShow: 1.7,
                 slidesToScroll: 1
             }
         }
