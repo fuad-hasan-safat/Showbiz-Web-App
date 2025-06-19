@@ -1,10 +1,9 @@
-import useTrendingStore from '../store/trendingStore';
 import Header from '../components/Layout/Header';
 import Footer from '../components/Layout/Footer';
 import { IoIosArrowBack } from "react-icons/io";
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { configs, playlistTypeComponents, sliderSettings, trandingSliderSettings, TrendingCard } from '../utils/constant';
+import { configs} from '../utils/constant';
 import { playlistTypeComponentsSeeAll, TrendingCardSeeAll } from '../utils/SeeallCards';
 import { Helmet } from 'react-helmet';
 
@@ -56,12 +55,6 @@ const SeeAll = () => {
         }
     };
 
-    const handlePageChange = (newPage) => {
-        if (newPage >= 1 && newPage <= pagination.totalPages) {
-            fetchPlaylistData(playlistUUID, newPage);
-        }
-    };
-
     return (
         <div className='container'>
 
@@ -108,7 +101,7 @@ const SeeAll = () => {
                                             title={item.contentName}
                                             subtitle={item.categoryName}
                                             image={item.thumbnailPath}
-                                            time={`${Math.floor(item.videoLength / 60)}h ${item.videoLength % 60}min`}
+                                            time={`${Math.floor(item.videoLength / 3600)}h ${((item.videoLength % 3600) / 60).toFixed(2)}min`}
                                             views={`${item.viewCount / 1000}K`}
                                             dates={`${formateddate}`}
                                         />

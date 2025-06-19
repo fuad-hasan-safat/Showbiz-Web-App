@@ -308,7 +308,7 @@ export default function MovieStatsPage() {
           {/* Title */}
           <div className="absolute top-4 w-full text-center z-10">
             <p className="text-white text-[20px] font-medium drop-shadow">
-              {videoData.contentName || "Loading..."}
+              {videoData.contentName.substring(0, 30) || "Loading..."}
             </p>
           </div>
 

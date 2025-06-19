@@ -25,13 +25,13 @@ const ProfileEdit = () => {
     };
 
     const Toast = () => (
-        <div className={`fixed top-5 right-5 p-4 rounded-md text-white ${toast.type === 'error' ? 'bg-red-500' : 'bg-green-500'
-            } transition-opacity duration-300 ${toast.show ? 'opacity-100' : 'opacity-0'
-            }`}>
+        <div
+            className={`fixed top-5 left-1/2 transform -translate-x-1/2 p-4 rounded-md text-white z-[99999] ${toast.type === 'error' ? 'bg-red-500' : 'bg-green-500'
+                } transition-opacity duration-300 ${toast.show ? 'opacity-100' : 'opacity-0'}`}
+        >
             {toast.message}
         </div>
     );
-
     useEffect(() => {
         const user_phone = localStorage.getItem('user_phone');
         console.log("User Phone: ", user_phone);
@@ -55,7 +55,7 @@ const ProfileEdit = () => {
             setuserData((prev) => ({
                 ...prev,
                 name: data.name,
-                image: `${configs.API_BASE_PATH}${data.image}`,
+                image: data?.image ? `${configs.API_BASE_PATH}${data.image}` : 'https://i.ibb.co/4pDNDk1/avatar.png',
                 phone: data.phone
             }));
         } catch (error) {
@@ -121,7 +121,7 @@ const ProfileEdit = () => {
             setuserData(prev => ({
                 ...prev,
                 name: result.name,
-                image: result.image ? `${configs.API_BASE_PATH}${result.image}` : prev.image,
+                image: result?.image ? `${configs.API_BASE_PATH}${result.image}` : prev.image,
                 originalName: result.name // Store original name for change detection
             }));
             setSelectedFile(null);
@@ -149,7 +149,6 @@ const ProfileEdit = () => {
 
 
     // const profileName = userdata?.name ? userdata?.name : 'Rajib Sa';
-    const profileImage = userdata?.image ? `${userdata.image}` : 'https://i.ibb.co/4pDNDk1/avatar.png';
 
     return userdata && (
         <div className='container bg-white'>
@@ -160,8 +159,9 @@ const ProfileEdit = () => {
                 {/* <meta property="og:image" content="https://example.com/image.jpg" /> */}
                 {/* Add more meta tags as needed */}
             </Helmet>
-            <Header />
             <Toast />
+            <Header />
+
             <div className="min-h-screen bg-white p-4">
                 {/* Header */}
                 <div className="flex items-center justify-between pb-5 mb-10 border-b-2 border-[#ddd]">
@@ -173,7 +173,7 @@ const ProfileEdit = () => {
                 <div className="flex justify-center mb-8 relative">
                     <div className="relative w-24 h-24">
                         <img
-                            src={profileImage}
+                            src={userdata.image}
                             alt="Profile"
                             className="w-24 h-24 rounded-full object-cover border-2 border-[#4e507e] shadow-md"
                         />

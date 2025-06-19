@@ -1,9 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { FaAngleRight } from "react-icons/fa6";
-import { BiTime } from "react-icons/bi";
-import { IoMdEye } from "react-icons/io";
-import { IoStar } from "react-icons/io5";
-import { IoStarHalf } from "react-icons/io5";
 import { Link, useNavigate } from 'react-router-dom';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
@@ -11,7 +7,7 @@ import 'slick-carousel/slick/slick-theme.css';
 import Footer from '../components/Layout/Footer';
 import Header from '../components/Layout/Header';
 import useTrendingStore from '../store/trendingStore';
-import { configs, playlistTypeComponents, sliderSettings, trandingSliderSettings, TrendingCard } from '../utils/constant';
+import { configs, playlistTypeComponents, sliderSettings } from '../utils/constant';
 import { Helmet } from 'react-helmet';
 
 const HomePage = () => {
@@ -101,7 +97,7 @@ const HomePage = () => {
                 title={item.contentName}
                 subtitle={item.categoryName}
                 image={item.thumbnailPath}
-                time={`${Math.floor(item.videoLength / 60)}h ${item.videoLength % 60}min`}
+                time={`${Math.floor(item.videoLength / 3600)}h ${((item.videoLength % 3600) / 60).toFixed(2)}min`}
                 views={`${item.viewCount / 1000}K`}
                 dates={`${formateddate}`}
                 contentId={item.contentId}
@@ -118,40 +114,40 @@ const HomePage = () => {
       <Header />
       <div className="text-white min-h-screen">
         <div className='pb-28'>
-        {/* Tabs */}
-        <div className="relative max-w-[540px] w-full">
-          <div className="flex mb-5 gap-1 lg:gap-4 px-4 overflow-x-auto no-scrollbar">
-            {playlistNames.map((playlist, index) => (
-              <button
-                key={index}
-                className={`flex-shrink-0 px-4 lg:px-5 md:px-5 sm:px-5 py-1 capitalize border-2 border-[#B8B8B8] rounded-full whitespace-nowrap relative ${activeTab === index
+          {/* Tabs */}
+          <div className="relative max-w-[540px] w-full">
+            <div className="flex mb-5 gap-1 lg:gap-4 px-4 overflow-x-auto no-scrollbar">
+              {playlistNames.map((playlist, index) => (
+                <button
+                  key={index}
+                  className={`flex-shrink-0 px-4 lg:px-5 md:px-5 sm:px-5 py-1 capitalize border-2 border-[#B8B8B8] rounded-full whitespace-nowrap relative ${activeTab === index
                     ? 'text-[#fff] border-[#FE0101] bg-[#FE0101]'
                     : 'text-[#B8B8B8]'
-                  }`}
-                onClick={() => {
-                  setActiveTab(index);
-                }}
-              >
-                {playlist}
-              </button>
-            ))}
+                    }`}
+                  onClick={() => {
+                    setActiveTab(index);
+                  }}
+                >
+                  {playlist}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
 
 
 
-        {/* Content */}
-        <div className="space-y-8">
-          {homepagedata && activeTab === 0 && (
-            <>
-              {homepagedata.map(renderPlaylistSlider)}
-            </>
-          )}
+          {/* Content */}
+          <div className="space-y-8">
+            {homepagedata && activeTab === 0 && (
+              <>
+                {homepagedata.map(renderPlaylistSlider)}
+              </>
+            )}
 
-          {homepagedata && activeTab !== 0 && activeTab <= homepagedata.length && (
-            renderPlaylistSlider(homepagedata[activeTab - 1])
-          )}
-        </div>
+            {homepagedata && activeTab !== 0 && activeTab <= homepagedata.length && (
+              renderPlaylistSlider(homepagedata[activeTab - 1])
+            )}
+          </div>
         </div>
       </div>
       <Footer />

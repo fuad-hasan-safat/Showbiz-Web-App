@@ -31,6 +31,7 @@ const notifications = [
 const Notification = () => {
   return (
     <div className='container bg-white'>
+      
         <Header />
         <div className="min-h-screen bg-white p-4">
         {/* Header */}

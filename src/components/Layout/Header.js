@@ -6,7 +6,7 @@ const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <div className="py-5 relative z-50">
+    <div className="py-5 relative z-[999]">
       <div className="container">
         <div className="flex justify-between items-center px-5 relative">
           <div></div>
