@@ -9,7 +9,6 @@ export const configs = {
 }
 
 
-
 // Slider settings
 export const trandingSliderSettings = {
     dots: false,
