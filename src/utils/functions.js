@@ -2,6 +2,7 @@ import { configs } from "./constant";
 
 export const handleGetOtp = async (phone, navigate) => {
   try {
+    console.log("URL::: ",configs.API_BASE_PATH)
     const response = await fetch(`${configs.API_BASE_PATH}/auth/request-otp`, {
       method: 'POST',
       headers: {

@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 const { navigate } = require("react-router-dom");
 
 export const configs = {
-    API_BASE_PATH: "http://192.168.88.149:3000",
+    API_BASE_PATH: process.env.REACT_APP_API_URL,
 }
 
 
@@ -108,7 +108,7 @@ export const TrendingCard = ({ title, subtitle, image, contentId, multiLine = fa
 
     return (
         <CardWrapper contentId={contentId}>
-            <div className="rounded-[15px] relative overflow-hidden">
+            <div className="rounded-[15px] h-[280px] w-full relative overflow-hidden">
                 <img
                     src={`${configs.API_BASE_PATH}${image}`}
                     alt={title}
@@ -142,7 +142,7 @@ const NewReleaseCard = ({ title, time, views, image, contentId }) => {
 
     return (
         <CardWrapper contentId={contentId}>
-            <div className="bg-[#292626] border-2 border-[#262626] rounded-[10px] overflow-hidden h-full p-3">
+            <div className="bg-[#292626] border-2 border-[#262626] rounded-[10px] w-full  overflow-hidden h-full p-3">
                 <img
                     src={`${configs.API_BASE_PATH}${image}`}
                     alt={title}
@@ -172,7 +172,7 @@ const EntertainmentCard = ({ title, dates, image, contentId }) => {
 
     return (
         <CardWrapper contentId={contentId}>
-            <div className="bg-[#292626] border-2 border-[#262626] rounded-[10px] overflow-hidden h-full p-3">
+            <div className="bg-[#292626] border-2 border-[#262626] rounded-[10px] w-full  overflow-hidden h-full p-3">
                 <img
                     src={`${configs.API_BASE_PATH}${image}`}
                     alt={title}
