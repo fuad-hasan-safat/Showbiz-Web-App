@@ -20,6 +20,7 @@ import Notification from './pages/Notification';
 import SingInPage from './pages/SingInPage';
 import History from './pages/History';
 import Search from './pages/Search';
+import SubscriptionPage from './pages/Subscription';
 
 function App() {
   return (
@@ -38,6 +39,7 @@ function App() {
         <Route path="/profile" element={<ProfileEdit />} />
          <Route path="/search" element={<Search />} />
         <Route path="/notification" element={<Notification />} />
+        <Route path="/subscription" element={<SubscriptionPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </Router>

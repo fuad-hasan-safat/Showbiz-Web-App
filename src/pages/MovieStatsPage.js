@@ -1,373 +1,521 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, useCallback } from "react";
 import Hls from "hls.js";
 import { useSwipeable } from "react-swipeable";
-import { useNavigate } from "react-router-dom";
-import { FaShare } from "react-icons/fa"; // FaHeart and FaCommentDots removed as they are in child components
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { FaShare } from "react-icons/fa";
 import { configs } from "../utils/constant";
-import LikeButton from "../components/Movie/LikeButton"; // Import LikeButton
-import CommentButton from "../components/Movie/CommentButton"; // Import CommentButton
+import LikeButton from "../components/Movie/LikeButton";
+import CommentButton from "../components/Movie/CommentButton";
 import { Helmet } from "react-helmet";
+import useLoadingStore from "../store/loadingStore";
+import FullscreenLoader from "../components/loader/FullscreenLoader";
 
 export default function MovieStatsPage() {
   const { contentID } = useParams();
   const navigate = useNavigate();
   const videoRef = useRef(null);
+
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
   const [progress, setProgress] = useState(0);
   const [videoData, setVideoData] = useState(null);
-  const [isLikedByUser, setIsLikedByUser] = useState(false); // Still needed for initial prop to LikeButton
+  const [playlistData, setPlaylistdata] = useState(null);
+  const [isLikedByUser, setIsLikedByUser] = useState(false);
+  const [error, setError] = useState(null);
 
+  const setLoading = useLoadingStore((s) => s.setLoading);
+  const isLoading = useLoadingStore((s) => s.isLoading);
+
+  /* ---------------------------------------------
+     When contentID changes, show the fullscreen loader
+  ----------------------------------------------*/
   useEffect(() => {
-    if (!localStorage.getItem('access_token')) {
-      navigate('/singin');
+    if (contentID) {
+      setLoading(true);
+      // clear previous states
+      setVideoData(null);
+      setPlaylistdata(null);
+      setError(null);
+      setProgress(0);
+      setIsPlaying(false);
     }
-    setVideoData(null);
-    setProgress(0);
-    setIsPlaying(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [contentID]);
 
-    const video = videoRef.current;
-    if (video) {
-      video.pause();
-      video.removeAttribute('src');
-      video.load();
+  /* ----------------------------------------------------
+      NAV GUARD (auth) + initial data fetch
+  ---------------------------------------------------- */
+  useEffect(() => {
+    if (!localStorage.getItem("access_token")) {
+      navigate("/singin");
+      return;
     }
 
-    console.log("Content ID:", contentID);
     if (contentID) {
       getVideoData(contentID);
-      getIsLikedContent(contentID); // Fetch initial liked status
+      getIsLikedContent(contentID);
     }
 
+    // cleanup on unmount
     return () => {
-      setVideoData(null);
-      const video = videoRef.current;
-      if (video) {
-        video.pause();
-        video.removeAttribute('src');
-        video.load();
+      const v = videoRef.current;
+      if (v) {
+        v.pause();
+        v.removeAttribute("src");
+        v.load();
       }
     };
-  }, [contentID, navigate]); // Added navigate to dependency array
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [contentID, navigate]);
 
-  const getVideoData = async (contentID) => {
+  /* ----------------------------------------------------
+      GET VIDEO DATA
+  ---------------------------------------------------- */
+  const getVideoData = async (id) => {
     try {
+      setError(null);
       const response = await fetch(
-        // Corrected the API URL construction
-        `${configs.API_BASE_PATH}/publish/get-content/${contentID}?nocache=${Date.now()}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('access_token')}`
-        },
-      }
+        `${configs.API_BASE_PATH}/publish/get-content/${id}?nocache=${Date.now()}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
+        }
       );
+
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        throw new Error(`Failed to fetch video data: ${response.status}`);
       }
+
       const data = await response.json();
-      if (data && data.data && data.data.data) {
+      if (data?.data?.data) {
         setVideoData(data.data.data);
+        // playlistDetails might be in response.data.playlistDetails
+        setPlaylistdata(data.data.playlistDetails || null);
       } else {
-        console.error("Video data not found in response:", data);
-        setVideoData(null); // Ensure videoData is null if not found
+        setVideoData(null);
+        setPlaylistdata(null);
+        throw new Error("Video data missing in response");
       }
-    } catch (error) {
-      console.error("Failed to fetch video data:", error);
+    } catch (err) {
+      console.error(err);
       setVideoData(null);
+      setPlaylistdata(null);
+      setError(err.message || "Failed to load video");
+      setLoading(false);
     }
   };
 
-  const getIsLikedContent = async (contentID) => {
+  /* ----------------------------------------------------
+      GET LIKED STATUS
+  ---------------------------------------------------- */
+  const getIsLikedContent = async (id) => {
     try {
-      const response = await fetch(`${configs.API_BASE_PATH}/favorite/check-like/${localStorage.getItem('user_uuid')}/${contentID}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+      const response = await fetch(
+        `${configs.API_BASE_PATH}/favorite/check-like/${localStorage.getItem(
+          "user_uuid"
+        )}/${id}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
         }
-      });
+      );
+
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        throw new Error("Failed to fetch liked status");
       }
+
       const data = await response.json();
-      console.log("Is liked content response:", data.isLiked);
-      setIsLikedByUser(data.isLiked);
-    } catch (error) {
-      console.error("Failed to fetch liked status:", error);
-      setIsLikedByUser(false); // Default to false on error
+      setIsLikedByUser(Boolean(data.isLiked));
+    } catch (err) {
+      console.error("Failed to fetch liked status:", err);
+      setIsLikedByUser(false);
     }
-  }
+  };
 
+  /* ----------------------------------------------------
+      SAVE WATCH HISTORY (best-effort)
+  ---------------------------------------------------- */
   useEffect(() => {
-    if (videoData && contentID) { // Ensure videoData and contentID are present
-      console.log("Video data loaded, setting history:", videoData);
-      setVideoHistory();
-    } else {
-      console.log("Video data or contentID not available for history.");
+    if (videoData && contentID) {
+      // fire and forget
+      (async () => {
+        try {
+          if (!localStorage.getItem("user_uuid")) return;
+          const apidata = {
+            userId: localStorage.getItem("user_uuid"),
+            userPhone: localStorage.getItem("user_phone"),
+            contentId: contentID,
+            contentName: videoData?.contentName || "",
+            categoryName: videoData?.categoryName || "",
+            categoryUUID: videoData?.categoryUUID || "",
+            contentType: videoData?.contentType || "",
+            description: videoData?.description || "",
+            tags: videoData?.tags || "",
+            filePath: videoData?.filePath || "",
+            thumbnailPath: videoData?.thumbnailPath || "",
+            isPremium: videoData?.isPremium || false,
+            artist: videoData?.artist || "",
+            royalty: videoData?.royalty || "",
+            publishStatus: videoData?.publishStatus || false,
+            updateStatus: videoData?.updateStatus || "",
+            videoLength: videoData?.videoLength || 0,
+            shareCount: videoData?.shareCount || 0,
+            viewCount: (videoData?.viewCount || 0) + 1,
+            likeCount: videoData?.likeCount || 0,
+            commentCount: videoData?.commentCount || 0,
+            playlistId: playlistData?.PlaylistUUID ?? playlistData?.playlistUUID ?? null,
+            playlistName: playlistData?.playlistName ?? null,
+            isPublished: Boolean(videoData?.publishStatus),
+          };
+
+          await fetch(`${configs.API_BASE_PATH}/history/create`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            },
+            body: JSON.stringify(apidata),
+          });
+        } catch (err) {
+          // history errors should not block the user; just log
+          console.error("Failed to create watch history", err);
+        }
+      })();
     }
-  }, [videoData, contentID]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [videoData, contentID, playlistData]);
 
-  // call history API to set video view
-
-  const setVideoHistory = async () => {
-    if (!contentID || !localStorage.getItem('user_uuid')) return;
-
-    const apidata = {
-      userId: localStorage.getItem('user_uuid'),
-      userPhone: localStorage.getItem('user_phone'),
-      contentId: contentID,
-      contentName: videoData?.contentName || " ",
-      categoryName: videoData?.categoryName || " ",
-      categoryUUID: videoData?.categoryUUID || " ",
-      contentType: videoData?.contentType || " ",
-      description: videoData?.description || " ",
-      tags: videoData?.tags || " ",
-      filePath: videoData?.filePath || " ",
-      thumbnailPath: videoData?.thumbnailPath || " ",
-      isPremium: videoData?.isPremium || false,
-      artist: videoData?.artist || " ",
-      royalty: videoData?.royalty || " ",
-      publishStatus: videoData?.publishStatus || " ",
-      updateStatus: videoData?.updateStatus || " ",
-      videoLength: videoData?.videoLength || " ",
-      shareCount: videoData?.shareCount || " ",
-      viewCount: videoData?.viewCount + 1 || " ",
-      likeCount: videoData?.likeCount || " ",
-      commentCount: videoData?.commentCount || " ",
-      playlistId: videoData?.playlistId || " ",
-      playlistName: videoData?.playlistName || " ",
-      isPublished: videoData?.isPublished || false,
-    }
-
-    console.log("Setting video history with data:", apidata);
-
-    const response = await fetch(`${configs.API_BASE_PATH}/history/create`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('access_token')}`
-      },
-      body: JSON.stringify(apidata)
-    });
-
-    const data = await response.json();
-    console.log("History set response:", data);
-
-  }
-
-  // Load video with HLS support
+  /* ----------------------------------------------------
+      LOAD HLS + manage loader lifecycle
+      Hide loader when video can play or HLS parsed
+  ---------------------------------------------------- */
   useEffect(() => {
-    const video = videoRef.current;
+    const v = videoRef.current;
     let hls;
+    if (!v || !videoData?.filePath) {
+      return;
+    }
 
-    if (!video || !videoData?.filePath) return;
+    const handleCanPlay = () => {
+      // video is ready to play -> hide loader
+      setLoading(false);
+      setIsPlaying(!v.paused);
+    };
+
+    // Attach listeners early so canplay is handled
+    v.addEventListener("canplay", handleCanPlay);
+    v.addEventListener("error", () => {
+      setLoading(false);
+    });
 
     if (Hls.isSupported()) {
       hls = new Hls();
       hls.loadSource(videoData.filePath);
-      hls.attachMedia(video);
-    } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
-      video.src = videoData.filePath;
+      hls.attachMedia(v);
+
+      // When manifest parsed / first level ready
+      const onManifestParsed = () => {
+        // Mark ready; can still wait for canplay if needed
+        // Many streams fire canplay shortly after
+        // but ensure loader hidden if manifest parsed early
+        setLoading(false);
+      };
+
+      hls.on(Hls.Events.MANIFEST_PARSED, onManifestParsed);
+      hls.on(Hls.Events.ERROR, (event, data) => {
+        console.warn("HLS error", event, data);
+      });
+    } else if (v.canPlayType && v.canPlayType("application/vnd.apple.mpegurl")) {
+      v.src = videoData.filePath;
+      // leave loader until canplay
     }
 
+    // ensure autoplay/muted state respects isMuted
+    v.muted = isMuted;
+
     return () => {
+      v.removeEventListener("canplay", handleCanPlay);
+      v.removeEventListener("error", () => {});
       if (hls) {
-        hls.destroy(); // Critical cleanup
-        video.removeAttribute('src');
-        video.load();
+        hls.destroy();
+      }
+      try {
+        v.removeAttribute("src");
+        v.load();
+      } catch (e) {
+        // ignore
       }
     };
-  }, [videoData]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [videoData, isMuted]);
 
-  const handlePlayPause = () => {
-    const video = videoRef.current;
-    if (video.paused) {
-      video.play();
+  /* ----------------------------------------------------
+      PLAY / PAUSE
+  ---------------------------------------------------- */
+  const handlePlayPause = useCallback(() => {
+    const v = videoRef.current;
+    if (!v) return;
+    if (v.paused) {
+      v.play().catch(() => {}); // ignore play promise errors
       setIsPlaying(true);
     } else {
-      video.pause();
+      v.pause();
       setIsPlaying(false);
     }
-  };
+  }, []);
 
-  // Track video progress and play state
+  /* ----------------------------------------------------
+      MUTE / UNMUTE
+  ---------------------------------------------------- */
+  const toggleMute = useCallback(() => {
+    const v = videoRef.current;
+    if (!v) return;
+    v.muted = !v.muted;
+    setIsMuted(v.muted);
+  }, []);
+
+  /* ----------------------------------------------------
+      PROGRESS
+  ---------------------------------------------------- */
   useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
+    const v = videoRef.current;
+    if (!v) return;
 
     const updateProgress = () => {
-      if (video.duration) {
-        const percentage = (video.currentTime / video.duration) * 100;
-        setProgress(percentage);
+      if (v.duration) {
+        setProgress((v.currentTime / v.duration) * 100);
       }
     };
 
-    const handlePlay = () => setIsPlaying(true);
-    const handlePause = () => setIsPlaying(false);
+    v.addEventListener("timeupdate", updateProgress);
+    setIsPlaying(!v.paused);
 
-    video.addEventListener('timeupdate', updateProgress);
-    video.addEventListener('play', handlePlay);
-    video.addEventListener('pause', handlePause);
-
-    // Initial state check
-    setIsPlaying(!video.paused);
-
-    return () => {
-      video.removeEventListener('timeupdate', updateProgress);
-      video.removeEventListener('play', handlePlay);
-      video.removeEventListener('pause', handlePause);
-    };
+    return () => v.removeEventListener("timeupdate", updateProgress);
   }, [contentID, videoData]);
 
+  /* ----------------------------------------------------
+      SWIPE (UP = NEXT, DOWN = PREVIOUS)
+      Set loader before navigating to next/prev
+  ---------------------------------------------------- */
   const swipeHandlers = useSwipeable({
-    onSwipedLeft: async () => {
-      const res = await fetch(`${configs.API_BASE_PATH}/publish/get-content/${contentID}/next`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('access_token')}`
-        },
-      });
-      const next = await res.json();
-      console.log("Next video:", next);
-      if (next?.status) navigate(`/movie-stats/${next?.nextContentId}`);
+    onSwipedUp: async () => {
+      try {
+        setLoading(true);
+        const res = await fetch(
+          `${configs.API_BASE_PATH}/publish/get-content/${contentID}/next`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            },
+          }
+        );
+        const next = await res.json();
+        if (next?.status && next.nextContentId) {
+          navigate(`/movie-stats/${next.nextContentId}`);
+        } else {
+          setLoading(false);
+        }
+      } catch (err) {
+        console.error("Swipe next failed", err);
+        setLoading(false);
+      }
     },
-    onSwipedRight: async () => {
-      const res = await fetch(`${configs.API_BASE_PATH}/publish/get-content/${contentID}/previous`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('access_token')}`
-        },
-      });
-      const prev = await res.json();
-      console.log("Previous video:", prev);
-      if (prev?.status) navigate(`/movie-stats/${prev?.previousContentId}`);
+
+    onSwipedDown: async () => {
+      try {
+        setLoading(true);
+        const res = await fetch(
+          `${configs.API_BASE_PATH}/publish/get-content/${contentID}/previous`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            },
+          }
+        );
+        const prev = await res.json();
+        if (prev?.status && prev.previousContentId) {
+          navigate(`/movie-stats/${prev.previousContentId}`);
+        } else {
+          setLoading(false);
+        }
+      } catch (err) {
+        console.error("Swipe prev failed", err);
+        setLoading(false);
+      }
     },
-    preventDefaultTouchmoveEvent: true,
+
+    preventScrollOnSwipe: true,
     trackMouse: true,
   });
 
-  // likehandaller and commentButtonHandler are removed as their logic is now in child components
+  /* ----------------------------------------------------
+      BACK navigation: smart behavior + loader
+  ---------------------------------------------------- */
+  const handleBack = () => {
+    const prev = localStorage.getItem("prev_route");
+    // show loader while transitioning
+    setLoading(true);
 
-  // Callback for CommentButton to update comment count in videoData if needed for other parts of MovieStatsPage
-  // For now, we assume CommentButton handles its display independently.
-  // If MovieStatsPage needs to react to comment count changes (e.g., for other UI elements not part of CommentButton),
-  // we would pass a callback like this:
-  // const handleCommentAdded = () => {
-  //   setVideoData(prevData => ({
-  //     ...prevData,
-  //     commentCount: (prevData.commentCount || 0) + 1
-  //   }));
-  // };
-  // And pass it to <CommentButton onCommentAdded={handleCommentAdded} ... />
+    if (prev === "seeall") {
+      // prefer navigating to saved playlist page if playlist UUID present
+      const pid =
+        playlistData?.PlaylistUUID ?? playlistData?.playlistUUID ?? null;
+      if (pid) {
+        navigate(`/seeall/${pid}`);
+        return;
+      }
+      // fallback to history
+      navigate(-1);
+      return;
+    }
 
-  if (!videoData) {
+    // default to home
+    navigate("/home");
+  };
+
+  /* ----------------------------------------------------
+      RENDER
+  ---------------------------------------------------- */
+  if (!videoData && !isLoading) {
+    // This condition avoids double showing the built-in Loading video...
+    // If loader is active via global store, FullscreenLoader will show.
     return (
-      <div className="container">
-        <div className="flex justify-center items-center min-h-screen bg-black">
-          {/* Improved loading/error message */}
-          <p className="text-white text-lg">{contentID ? "Loading video..." : "Video not found"}</p>
-        </div>
+      <div className="flex justify-center items-center min-h-screen bg-black">
+        <p className="text-white text-lg">{error ? error : "Loading video..."}</p>
       </div>
     );
   }
 
-  return contentID && videoData && ( // Ensure videoData is also available before rendering
-    <div className="container">
+  return (
+    <div className="w-full h-screen overflow-hidden bg-black relative">
       <Helmet>
-        <title>{videoData.contentName}</title>
-        <meta name="description" content="This is showbiz portal" />
-        <meta property="og:title" content={`${videoData.contentName}`} />
-        {/* <meta property="og:image" content="https://example.com/image.jpg" /> */}
-        {/* Add more meta tags as needed */}
+        <title>{videoData?.contentName ?? "Video"}</title>
       </Helmet>
-      <div className="flex justify-center items-center relative min-h-screen">
-        <div {...swipeHandlers} className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[360px] h-[640px]">
 
-          {/* Background Video */}
-          <video
-            // controls={true} // Consider if controls are needed or if custom controls are sufficient
-            autoPlay={true}
-            playsInline={true}
-            key={contentID}
-            ref={videoRef}
-            className="w-full h-full rounded-md object-cover"
-            loop
-          ></video>
+      {/* Global fullscreen loader */}
+      <FullscreenLoader message="Preparing video..." />
 
-          {/* Loading overlay - This might be redundant if the !videoData check above handles it */}
-          {/* Consider removing if the top-level !videoData check is sufficient */}
-          {/* {!videoData && (
-            <div className="absolute inset-0 bg-black/80 flex items-center justify-center z-30">
-              <p className="text-white">Loading...</p>
-            </div>
-          )} */}
+      <div {...swipeHandlers} className="absolute inset-0 w-full h-full">
+        <video
+          autoPlay
+          playsInline
+          key={contentID}
+          ref={videoRef}
+          className="w-full h-full object-cover"
+          muted={isMuted}
+          loop
+        ></video>
 
-          {/* Title */}
-          <div className="absolute top-4 w-full text-center z-10">
-            <p className="text-white text-[20px] font-medium drop-shadow">
-              {videoData.contentName.substring(0, 30) || "Loading..."}
-            </p>
+        {/* TOP BAR — Back | Title | Volume */}
+        <div className="absolute top-5 left-0 right-0 z-30 flex justify-between items-center px-5">
+          {/* BACK BUTTON */}
+          <div onClick={handleBack} className="cursor-pointer">
+            <svg width="40" height="40" viewBox="0 0 50 50" fill="none">
+              <circle cx="25" cy="25" r="23" stroke="white" strokeWidth="3" />
+              <polyline
+                points="28,15 18,25 28,35"
+                stroke="white"
+                strokeWidth="3"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
           </div>
 
-          {/* Play Button */}
-          {!isPlaying && (
-            <div
-              className="absolute top-1/2 left-1/2 z-10 transform -translate-x-1/2 -translate-y-1/2 cursor-pointer"
-              onClick={handlePlayPause}
-            >
-              <div className="border-[5px] border-[#fff] p-4 rounded-full">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-10 w-10 text-white"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M14.752 11.168l-5.197-3.028A1 1 0 008 9.028v5.944a1 1 0 001.555.832l5.197-3.028a1 1 0 000-1.664z"
-                  />
-                </svg>
-              </div>
-            </div>
-          )}
+          {/* TITLE (Center) */}
+          <p className="text-white text-[16px] font-semibold truncate max-w-[60%] text-center">
+            {videoData?.contentName}
+          </p>
 
-          {/* Right side icons - Using new components */}
-          <div className="absolute bottom-20 right-10 flex flex-col items-center gap-5 text-white text-sm z-10">
-            <LikeButton
-              contentID={contentID}
-              initialLikeCount={videoData.likeCount}
-              initialIsLikedByUser={isLikedByUser}
-              apiBasePath={configs.API_BASE_PATH}
-            />
-            <CommentButton
-              contentID={contentID}
-              initialCommentCount={videoData.commentCount}
-              apiBasePath={configs.API_BASE_PATH}
-            // onCommentAdded={handleCommentAdded} // Uncomment if MovieStatsPage needs to react to comment count
-            />
-            <div className="flex flex-col items-center"> {/* Share button remains */}
-              <FaShare className="text-2xl" />
-              <span>{videoData.shareCount === undefined || videoData.shareCount === null ? 0 : videoData.shareCount}</span>
-            </div>
+          {/* VOLUME / MUTE BUTTON */}
+          <div className="cursor-pointer" onClick={toggleMute}>
+            {isMuted ? (
+              <svg width="40" height="40" viewBox="0 0 50 50" fill="none">
+                <circle cx="25" cy="25" r="23" stroke="white" strokeWidth="3" />
+                <path d="M18 20L24 20L30 15V35L24 30H18V20Z" fill="white" />
+                <line
+                  x1="33"
+                  y1="19"
+                  x2="39"
+                  y2="31"
+                  stroke="white"
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                />
+                <line
+                  x1="39"
+                  y1="19"
+                  x2="33"
+                  y2="31"
+                  stroke="white"
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                />
+              </svg>
+            ) : (
+              <svg width="40" height="40" viewBox="0 0 50 50" fill="none">
+                <circle cx="25" cy="25" r="23" stroke="white" strokeWidth="3" />
+                <path d="M18 20L24 20L30 15V35L24 30H18V20Z" fill="white" />
+                <path
+                  d="M33 20C35 22 35 28 33 30"
+                  stroke="white"
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                />
+              </svg>
+            )}
           </div>
-
-          {/* Progress Bar */}
-          <div className="absolute bottom-0 left-0 w-full h-[6px] bg-[#000] z-20">
-            <div
-              className="h-full bg-[#FE2C55] transition-all duration-100 ease-linear"
-              style={{ width: `${progress}%` }}
-            ></div>
-          </div>
-
-          {/* Overlay click to play/pause */}
-          <div className="absolute inset-0 z-0" onClick={handlePlayPause}></div>
         </div>
+
+        {/* ▶⏸ PLAY / PAUSE (Center) */}
+        {!isPlaying && (
+          <div
+            className="absolute top-1/2 left-1/2 z-20 transform -translate-x-1/2 -translate-y-1/2 cursor-pointer"
+            onClick={handlePlayPause}
+          >
+            {/* PLAY ICON */}
+            <svg width="80" height="80" viewBox="0 0 50 50" fill="none">
+              <circle cx="25" cy="25" r="23" stroke="white" strokeWidth="3" />
+              <polygon points="20,16 36,25 20,34" fill="white" />
+            </svg>
+          </div>
+        )}
+
+        {/* RIGHT SIDE ICONS */}
+        <div className="absolute bottom-20 right-6 flex flex-col items-center gap-6 text-white z-20">
+          <LikeButton
+            contentID={contentID}
+            initialLikeCount={videoData?.likeCount}
+            initialIsLikedByUser={isLikedByUser}
+            apiBasePath={configs.API_BASE_PATH}
+          />
+
+          <CommentButton
+            contentID={contentID}
+            initialCommentCount={videoData?.commentCount}
+            apiBasePath={configs.API_BASE_PATH}
+          />
+
+          <div className="flex flex-col items-center">
+            <FaShare className="text-3xl" />
+            <span>{videoData?.shareCount || 0}</span>
+          </div>
+        </div>
+
+        {/* PROGRESS BAR */}
+        <div className="absolute bottom-0 left-0 w-full h-[6px] bg-black/50 z-20">
+          <div
+            className="h-full bg-[#FE2C55] transition-all"
+            style={{ width: `${progress}%` }}
+          ></div>
+        </div>
+
+        {/* CLICK ANYWHERE TO PAUSE */}
+        <div className="absolute inset-0" onClick={handlePlayPause}></div>
       </div>
     </div>
   );

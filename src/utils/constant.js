@@ -2,6 +2,7 @@ import { BiTime } from "react-icons/bi";
 import { IoMdEye } from "react-icons/io";
 import { IoStar, IoStarHalf } from "react-icons/io5";
 import { Link } from "react-router-dom";
+import useLoadingStore from "../store/trendingStore";
 const { navigate } = require("react-router-dom");
 
 export const configs = {
@@ -91,22 +92,28 @@ export const lifestyleSliderSettings = {
 };
 
 
-const CardWrapper = ({ children, contentId }) => (
+const CardWrapper = ({ children, contentId }) => {
+    const setLoading = useLoadingStore((s) => s.setLoading);
+
+    localStorage.setItem("prev_route", 'home');
+    setLoading(true);
+
+    return(
     <div className="px-2">
         <Link to={`/movie-stats/${contentId}`} className="block h-full">
             {children}
         </Link>
     </div>
-);
+)};
 
-export const TrendingCard = ({ title, subtitle, image, contentId, multiLine = false }) => {
+export const TrendingCard = ({ title, subtitle, image, contentId, multiLine = false}) => {
     if (!contentId) {
         console.error('Missing contentId in TrendingCard');
         return null;
     }
 
     return (
-        <CardWrapper contentId={contentId}>
+        <CardWrapper contentId={contentId} >
             <div className="rounded-[15px] h-[280px] w-full relative overflow-hidden">
                 <img
                     src={`${configs.API_BASE_PATH}${image}`}
@@ -133,7 +140,7 @@ export const TrendingCard = ({ title, subtitle, image, contentId, multiLine = fa
 };
 
 // New Release Card (other cards follow similar pattern)
-const NewReleaseCard = ({ title, time, views, image, contentId }) => {
+const NewReleaseCard = ({ title, time, views, image, contentId}) => {
     if (!contentId) {
         console.error('Missing contentId in NewReleaseCard');
         return null;
@@ -191,7 +198,7 @@ const EntertainmentCard = ({ title, dates, image, contentId }) => {
     );
 };
 
-const LifestyleCard = ({ title, time, views, image, contentId }) => {
+const LifestyleCard = ({ title, time, views, image, contentId}) => {
     if (!contentId) {
         console.error('Missing contentId in LifestyleCard');
         return null;

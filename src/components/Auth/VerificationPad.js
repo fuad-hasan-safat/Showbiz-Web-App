@@ -94,7 +94,7 @@ const VerificationPad = ({ phone, onComplete }) => {
         onClick={()=>handleGetOtp(phone, navigate)}
          className="bg-gradient-to-r from-[#FB8408] to-[#FE0101] bg-clip-text text-transparent font-bold cursor-pointer">Resend</span>
       </p>
-      <div className='bg-[#F3F3F6] pt-2 px-2 pb-[75px]'>
+      {/* <div className='bg-[#F3F3F6] pt-2 px-2 pb-[75px]'>
         <div className="grid grid-cols-3 gap-2 mb-2 leading-none">
           {[1, 2, 3, 4, 5, 6, 7, 8, 9].map(num => (
             <button
@@ -134,7 +134,7 @@ const VerificationPad = ({ phone, onComplete }) => {
             <img src='/images/delete.png' alt='Delete' />
           </button>
         </div>
-      </div>
+      </div> */}
     </>
   );
 };

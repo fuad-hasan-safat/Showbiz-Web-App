@@ -3,15 +3,21 @@ import { IoMdEye } from "react-icons/io";
 import { IoStar, IoStarHalf } from "react-icons/io5";
 import { Link } from "react-router-dom";
 import { configs } from "./constant";
+import useLoadingStore from "../store/trendingStore";
 const { navigate } = require("react-router-dom");
 
-const CardWrapperSeeAll = ({ children, contentId }) => (
+const CardWrapperSeeAll = ({ children, contentId }) => {
+    const setLoading = useLoadingStore((s) => s.setLoading);
+    setLoading(true);
+    localStorage.setItem("prev_route", 'seeall');
+
+    return (
     <div className="">
         <Link to={`/movie-stats/${contentId}`} className="block h-full">
             {children}
         </Link>
     </div>
-);
+)};
 
 export const TrendingCardSeeAll = ({ title, subtitle, image, contentId, multiLine = false }) => {
     if (!contentId) {
