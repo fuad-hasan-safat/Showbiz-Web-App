@@ -1,292 +1,239 @@
+"use client";
+
 import React, { useState } from "react";
 import { IoIosArrowBack } from "react-icons/io";
 import { FaCheck } from "react-icons/fa6";
 
-// Operator configuration with colors and images
-const operators = [
-    { 
-        id: 'robi', 
-        name: 'Robi', 
-        colorClass: 'bg-red-600 border-red-600', 
-        textColor: 'text-red-600', 
-        img: '/robi.png',
-        // Inline styles for dynamic colors
-        style: { backgroundColor: 'rgb(220, 38, 38)', borderColor: 'rgb(220, 38, 38)' } 
-    },
-    { 
-        id: 'gp', 
-        name: 'Grameenphone', 
-        colorClass: 'custom-gp', // Placeholder class, actual style applied inline
-        textColor: 'text-blue-500', 
-        img: 'images/gp-icon.png',
-        // 💥 FIX: Using inline style for the exact custom color (#1aa9f8)
-        style: { backgroundColor: 'rgb(26, 169, 248)', borderColor: 'rgb(26, 169, 248)' }
-    }, 
-    { 
-        id: 'bl', 
-        name: 'Banglalink', 
-        colorClass: 'bg-orange-500 border-orange-500', 
-        textColor: 'text-orange-500', 
-        img: 'images/bl.png',
-        style: { backgroundColor: 'rgb(249, 115, 22)', borderColor: 'rgb(249, 115, 22)' }
-    },
-];
-
-const packages = [
-    {
-        id: 1,
-        title: "Popular",
-        price: "02.00",
-        duration: "Daily",
-        features: ["Unlimited Views", "On Demand"],
-    },
-    {
-        id: 2,
-        title: "Daily",
-        price: "05.00",
-        duration: "Daily",
-        features: ["Unlimited Views"],
-    },
-];
+import { useOperators } from "../sdk/subscription/useOperators";
+import { usePackages } from "../sdk/subscription/usePackages";
+import { useSelectedPackage } from "../sdk/subscription/useSelectedPackage";
 
 export default function SubscriptionPage() {
-    // Default selected to first package and Robi
-    const [selectedPack, setSelectedPack] = useState(packages[0].id); 
-    const [selectedOperator, setSelectedOperator] = useState('robi'); 
-    const [showSuccessPage, setShowSuccessPage] = useState(false);
+  const operators = useOperators(); // Robi, GP, BL
 
-    const currentOperator = operators.find(op => op.id === selectedOperator);
-    const currentSelectedPackage = packages.find(pkg => pkg.id === selectedPack);
-    
-    const isContinueDisabled = !selectedPack || !selectedOperator; 
+  const [selectedOperator, setSelectedOperator] = useState("robi");
 
-    // Helper to get the current operator object
-    const getOperatorColor = (operatorId) => {
-        return operators.find(op => op.id === operatorId) || currentOperator;
-    };
+  // All packages for selected operator
+  const packages = usePackages(selectedOperator);
 
-    // --- 1. RENDER CONGRATULATIONS PAGE ---
-    if (showSuccessPage) {
-        return (
-            <div className="container min-h-screen bg-white p-4 flex flex-col items-center">
-                {/* Back + Quiz Title */}
-                <div className="w-full flex justify-start items-center mb-6 mt-3 relative">
-                    <div
-                        className="flex items-center gap-2 text-[16px] cursor-pointer text-gray-800 absolute left-0"
-                        onClick={() => setShowSuccessPage(false)} 
-                    >
-                        <IoIosArrowBack className="text-[22px]" />
-                        <span className="font-medium">Back</span>
-                    </div>
-                    <h2 className="text-[20px] text-[#292626] font-semibold flex-grow text-center">Quiz</h2>
-                </div>
+  // Handle selected package
+  const {
+    selectedPackageId,
+    selectedPackage,
+    setSelectedPackageId,
+  } = useSelectedPackage(packages);
 
-                {/* Celebration Image */}
-                <div className="my-6 mt-16">
-                    <img src="images/congratulations.png" alt="Celebration" className="w-[280px] h-[180px] object-contain mx-auto" /> 
-                </div>
+  const [showSuccessPage, setShowSuccessPage] = useState(false);
 
-                {/* Congratulations Text */}
-                <h1 className="text-center text-[28px] font-extrabold text-gray-900 mb-2">
-                    Congratulations !!
-                </h1>
+  const currentOperator = operators.find((op) => op.id === selectedOperator);
 
-                {/* Subscription Success Message */}
-                <p className="text-center text-[16px] text-gray-700 leading-relaxed mb-8">
-                    You successfully subscribed
-                    <br />
-                    <span className="">
-                        {currentSelectedPackage?.duration} on demand pack for <span className="text-[18px] font-bold">৳{currentSelectedPackage?.price}</span>
-                    </span>
-                </p>
-
-                {/* Selected Package Card (Color based on selectedOperator) */}
-                {currentSelectedPackage && (
-                    <div
-                        // 💥 FIX: Apply inline style for background and border using the style property
-                        style={currentOperator?.style}
-                        className={`
-                            w-full p-5 rounded-[8px] transition-all duration-300 mx-auto mb-16 shadow-lg
-                            text-white border-2
-                        `}
-                    >
-                        {/* Header */}
-                        <div className="flex justify-between items-center mb-2">
-                            <p className="text-[14px] font-medium">{currentSelectedPackage.title}</p>
-                            <div className="w-6 h-6 flex items-center justify-center text-[18px] text-white"> 
-                                <FaCheck />
-                            </div>
-                        </div>
-
-                        {/* Price */}
-                        <p className="font-extrabold leading-none -mt-1 flex items-baseline">
-                            <span className="text-[28px]">৳</span>
-                            <span className="text-[40px] leading-none">{currentSelectedPackage.price}</span>
-                            <span className="text-[14px] font-medium ml-1"> / {currentSelectedPackage.duration}</span>
-                        </p>
-
-                        {/* Features */}
-                        <div className="mt-8 space-y-2">
-                            {currentSelectedPackage.features.map((f, i) => (
-                                <p key={i} className="text-[15px] flex items-center gap-2">
-                                    <span className="text-[18px] leading-none"><FaCheck /></span> {f} 
-                                </p>
-                            ))}
-                        </div>
-                    </div>
-                )}
-
-                {/* Ok Button */}
-                <button
-                    // 💥 FIX: Redirect to home page on 'Ok' click
-                    onClick={() => window.location.href = '/'} 
-                    style={currentOperator?.style}
-                    className={`w-full h-[55px] py-4 rounded-lg text-white text-[18px] font-medium shadow-md`}
-                >
-                    Ok
-                </button>
-            </div>
-        );
-    }
-
-    // --- 2. RENDER SUBSCRIPTION PAGE (DEFAULT) ---
+  // --------------------------------------------------------------------------
+  // SUCCESS PAGE
+  // --------------------------------------------------------------------------
+  if (showSuccessPage && selectedPackage) {
     return (
-        <div className="container min-h-screen relative bg-[#fff] p-4">
+      <div className="container min-h-screen bg-white p-4 flex flex-col items-center">
 
-            {/* Back + Title */}
-            <div 
-                className="flex items-center gap-1 text-[16px] mb-4 mt-3 cursor-pointer"
-                onClick={() => (window.location.href = "/")}
-            >
-                <IoIosArrowBack className="text-[22px]" />
-                <span className="font-medium">Back</span>
-            </div>
-
-            <h2 className="text-center text-[20px] text-[#292626] absolute top-6 left-1/2 -translate-x-1/2 font-semibold">Subscription</h2>
-            
-            {/* Operator Selection */}
-            <p className="mt-10 mb-3 font-semibold text-[#0B0616]">Select Operator</p>
-
-            <div className="grid grid-cols-3 gap-3 w-full p-2 bg-[#F8FAFC] rounded-lg">
-                {operators.map((operator) => (
-                    <div
-                        key={operator.id}
-                        onClick={() => setSelectedOperator(operator.id)}
-                        className={`p-3 flex items-center gap-3 cursor-pointer transition-all duration-200 rounded-lg
-                            ${selectedOperator === operator.id 
-                                // Selected state: background is white, border color is operator color
-                                ? `bg-white border-2 ${getOperatorColor(operator.id).textColor} border-current` 
-                                // Unselected state
-                                : "bg-transparent border-2 border-transparent"
-                            }`}
-                    >
-                        {/* Checkbox/Selection Indicator */}
-                        <div
-                            // 💥 FIX: Use inline style for Checkbox background to ensure correct GP color
-                            style={selectedOperator === operator.id ? getOperatorColor(operator.id).style : {}}
-                            className={`w-5 h-5 rounded border flex items-center justify-center flex-shrink-0
-                                ${selectedOperator === operator.id 
-                                    ? `` // Color handled by inline style
-                                    : "border-gray-400 bg-white"}`}
-                        >
-                            {selectedOperator === operator.id && <FaCheck className="text-white text-[12px]" />}
-                        </div>
-                        {/* Logo */}
-                        <img src={operator.img} alt={`${operator.name} Logo`} className="w-[40px] h-[40px] object-contain" />
-                    </div>
-                ))}
-            </div>
-
-            <p className="text-center text-[18px] font-semibold mb-4 text-[#FE0101] mt-14">
-                Select a plan
-            </p>
-
-            {/* Package Cards - Horizontal Scroll (Color based on selectedOperator) */}
-            <div className="overflow-x-auto no-scrollbar snap-x snap-mandatory px-1">
-                <div 
-                    className="flex gap-4"
-                >
-                    {packages.map((pkg, index) => (
-                        <div
-                            key={pkg.id}
-                            onClick={() => setSelectedPack(pkg.id)}
-                            // 💥 FIX: Use inline style for Package background and border
-                            style={selectedPack === pkg.id && currentOperator ? currentOperator.style : {}}
-                            className={`
-                                min-w-[260px] lg:min-w-[360px] md:min-w-[360px] sm:min-w-[360px] flex-shrink-0 snap-center
-                                p-5
-                                rounded-[8px]
-                                transition-all duration-300
-                                ${
-                                    selectedPack === pkg.id && currentOperator 
-                                    // Package color uses currentOperator's inline style
-                                    ? `text-white shadow-lg` // No bg/border class here, handled by inline style
-                                    // Unselected packages are red-bordered
-                                    : "bg-white text-black border-2 border-[#FE0101]"
-                                }
-                            `}
-                        >
-                            {/* Header */}
-                            <div className="flex justify-between items-center mb-2">
-                                <p className="text-[14px] font-medium">{pkg.title}</p>
-
-                                <div
-                                    className={`
-                                        w-6 h-6 flex items-center justify-center 
-                                        text-[18px] font-bold
-                                        ${
-                                            selectedPack === pkg.id && currentOperator
-                                            ? "text-white"
-                                            : "text-transparent"
-                                        }
-                                    `}
-                                >
-                                    <FaCheck />
-                                </div>
-                            </div>
-
-                            {/* Price */}
-                            <p className="font-extrabold leading-none -mt-1 flex items-baseline">
-                                <span className="text-[28px]">৳</span>
-                                <span className="text-[30px] leading-none">{pkg.price}</span>
-                                <span className="text-[14px] font-medium ml-1"> / {pkg.duration}</span>
-                            </p>
-
-                            {/* Features */}
-                            <div className="mt-10 space-y-2">
-                                {pkg.features.map((f, i) => (
-                                    <p key={i} className="text-[15px] flex items-center gap-2">
-                                        <span className="text-[18px] leading-none"><FaCheck /></span> {f}
-                                    </p>
-                                ))}
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </div>
-
-
-            {/* Terms */}
-            <p className="text-[12px] text-gray-600 my-20">
-                By tapping Continue, you will be charged, your subscription will auto-renew for the same price and package length until you cancel via App Store settings, and you agree to our {" "}
-                <span className="text-blue-600">Terms</span>.
-            </p>
-
-            {/* Continue Button (Color based on selectedOperator) */}
-            <button
-                disabled={isContinueDisabled}
-                onClick={() => setShowSuccessPage(true)} 
-                // FIX: Use inline style for Continue button background
-                style={isContinueDisabled ? {} : currentOperator?.style}
-                className={`w-full h-[55px] py-4 rounded-lg text-white text-[18px] font-semibold
-                    ${
-                        isContinueDisabled
-                        ? "bg-gray-400 cursor-not-allowed" // Disabled color
-                        : "" // Active color handled by inline style
-                    }`}
-            >
-                Continue
-            </button>
+        {/* Back */}
+        <div
+          className="w-full flex items-center gap-2 cursor-pointer mb-6 mt-3"
+          onClick={() => setShowSuccessPage(false)}
+        >
+          <IoIosArrowBack className="text-[22px]" />
+          <span className="font-medium">Back</span>
         </div>
+
+        <h2 className="text-[20px] text-[#292626] font-semibold">
+          Subscription Successful
+        </h2>
+
+        <div className="mt-10 mb-6">
+          <img
+            src="/images/congratulations.png"
+            alt="Success"
+            className="w-[280px] object-contain"
+          />
+        </div>
+
+        <h1 className="text-[28px] font-extrabold text-gray-900">
+          Congratulations!!
+        </h1>
+
+        <p className="text-center text-[16px] mt-3 text-gray-700">
+          You subscribed to:
+          <br />
+          <b>{selectedPackage.title}</b>
+          <br />
+          Charge: <b>৳{selectedPackage.charge}</b>
+        </p>
+
+        {/* Summary Card */}
+        <div
+          style={currentOperator?.style}
+          className="w-full p-5 rounded-lg border-2 text-white mt-10 shadow-lg"
+        >
+          <p className="text-[16px] font-semibold">{selectedPackage.title}</p>
+
+          <p className="text-[14px] mt-1">{selectedPackage.renewable}</p>
+          <p className="text-[14px]">Validity: {selectedPackage.validity} days</p>
+
+          <p className="text-[32px] font-extrabold mt-3">
+            ৳{selectedPackage.charge}
+          </p>
+        </div>
+
+        <button
+          onClick={() => (window.location.href = "/home")}
+          style={currentOperator?.style}
+          className="w-full h-[55px] rounded-lg text-white text-[18px] font-semibold mt-10"
+        >
+          OK
+        </button>
+      </div>
     );
+  }
+
+  // --------------------------------------------------------------------------
+  // MAIN SUBSCRIPTION PAGE
+  // --------------------------------------------------------------------------
+  return (
+    <div className="container min-h-screen bg-white p-4 relative">
+      
+      {/* Back */}
+      <div
+        className="flex items-center gap-1 text-[16px] mb-4 mt-3 cursor-pointer"
+        onClick={() => (window.location.href = "/")}
+      >
+        <IoIosArrowBack className="text-[22px]" />
+        <span className="font-medium">Back</span>
+      </div>
+
+      <h2 className="text-center text-[20px] font-semibold mt-2">
+        Subscription
+      </h2>
+
+      {/* Operator selection */}
+      <p className="mt-10 mb-3 font-semibold text-[#0B0616]">Select Operator</p>
+
+      <div className="grid grid-cols-3 gap-3 p-2 bg-[#F8FAFC] rounded-lg">
+        {operators.map((op) => (
+          <div
+            key={op.id}
+            onClick={() => setSelectedOperator(op.id)}
+            className={`
+              p-3 flex items-center gap-3 rounded-lg cursor-pointer transition
+              ${
+                selectedOperator === op.id
+                  ? "bg-white border-2 border-current"
+                  : "bg-transparent border-2 border-transparent"
+              }
+            `}
+            style={selectedOperator === op.id ? { color: op.textColor } : {}}
+          >
+            {/* Checkbox */}
+            <div
+              style={selectedOperator === op.id ? op.style : {}}
+              className={`
+                w-5 h-5 rounded border flex items-center justify-center
+                ${
+                  selectedOperator === op.id
+                    ? ""
+                    : "border-gray-400 bg-white"
+                }
+              `}
+            >
+              {selectedOperator === op.id && (
+                <FaCheck className="text-white text-[12px]" />
+              )}
+            </div>
+
+            <img
+              src={op.img}
+              alt={op.name}
+              className="w-[40px] h-[40px] object-contain"
+            />
+          </div>
+        ))}
+      </div>
+
+      {/* Title */}
+      <p className="text-center text-[18px] font-semibold text-[#FE0101] mt-10 mb-4">
+        Select a plan
+      </p>
+
+      {/* Package Cards */}
+      <div className="overflow-x-auto no-scrollbar snap-x snap-mandatory px-1">
+        <div className="flex gap-4">
+          {packages.map((pkg) => (
+            <div
+              key={pkg.id}
+              onClick={() => setSelectedPackageId(pkg.id)}
+              style={
+                selectedPackageId === pkg.id ? currentOperator?.style : {}
+              }
+              className={`
+                min-w-[260px] lg:min-w-[360px] flex-shrink-0 snap-center p-5
+                rounded-[8px] transition-all duration-300
+                ${
+                  selectedPackageId === pkg.id
+                    ? "text-white shadow-lg"
+                    : "bg-white text-black border-2 border-[#FE0101]"
+                }
+              `}
+            >
+              {/* Header */}
+              <div className="flex justify-between items-center mb-2">
+                <p className="text-[14px] font-medium">{pkg.title}</p>
+                <div
+                  className={`
+                    w-6 h-6 flex items-center justify-center text-[18px]
+                    ${
+                      selectedPackageId === pkg.id
+                        ? "text-white"
+                        : "text-transparent"
+                    }
+                  `}
+                >
+                  <FaCheck />
+                </div>
+              </div>
+
+              {/* Price */}
+              <p className="font-extrabold leading-none -mt-1 flex items-baseline">
+                <span className="text-[28px]">৳</span>
+                <span className="text-[30px] leading-none">{pkg.charge}</span>
+                <span className="text-[14px] ml-1">/ {pkg.validity} days</span>
+              </p>
+
+              {/* Renewable */}
+              <div className="mt-10">
+                <p className="text-[15px] flex items-center gap-2">
+                  <FaCheck className="text-[18px]" /> {pkg.renewable}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Terms */}
+      <p className="text-[12px] text-gray-600 my-20">
+        By tapping Continue, you agree to our{" "}
+        <span className="text-blue-600">Terms</span>.
+      </p>
+
+      {/* Continue Button */}
+      <button
+        disabled={!selectedPackage}
+        onClick={() => setShowSuccessPage(true)}
+        style={!selectedPackage ? {} : currentOperator?.style}
+        className={`
+          w-full h-[55px] rounded-lg text-white text-[18px] font-semibold
+          ${!selectedPackage && "bg-gray-400 cursor-not-allowed"}
+        `}
+      >
+        Continue
+      </button>
+    </div>
+  );
 }
