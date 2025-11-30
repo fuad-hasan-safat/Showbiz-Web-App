@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { IoClose } from "react-icons/io5";
 import { CiUser } from "react-icons/ci";
 import { IoNotificationsOutline } from "react-icons/io5";
@@ -9,6 +9,7 @@ import { IoIosArrowBack } from "react-icons/io";
 import { LuBadgePercent } from "react-icons/lu"; // Subscription look-alike icon
 
 const NavBar = ({ isOpen, onClose }) => {
+  const router = useNavigate();
   return (
     <div
       className={`
@@ -80,6 +81,7 @@ const NavBar = ({ isOpen, onClose }) => {
             localStorage.removeItem('access_token');
             localStorage.removeItem('user_uuid');
             localStorage.removeItem('user_phone');
+            router('/start');
             onClose();
           }}
         >

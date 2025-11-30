@@ -1,10 +1,13 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   BrowserRouter as Router,
   Routes,
   Route,
-  Navigate
+  Navigate,
+  useNavigate
 } from 'react-router-dom';
+
+import { useSubscriptionStore } from './store/subscriptionStore';
 
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
@@ -22,26 +25,49 @@ import History from './pages/History';
 import Search from './pages/Search';
 import SubscriptionPage from './pages/Subscription';
 
+function AppWrapper() {
+  const navigate = useNavigate();
+  const fetchSubData = useSubscriptionStore((s) => s.fetchSubData);
+
+  useEffect(() => {
+    const checkSubscription = async () => {
+      const res = await fetchSubData();
+
+      if (res?.mobileNumber && res.mobileNumber !== false) {
+        navigate("/home", { replace: true });
+      } else {
+        navigate("/singin", { replace: true });
+      }
+    };
+
+    checkSubscription();
+  }, []);
+
+  return (
+    <Routes>
+      <Route path="/" element={<Navigate to="/start" replace />} />
+
+      <Route path="/start" element={<StartPage />} />
+      <Route path="/singin" element={<SingInPage />} />
+      <Route path="/verify" element={<VerificationPage />} />
+      <Route path="/home" element={<HomePage />} />
+      <Route path="/movie-stats/:contentID" element={<MovieStatsPage />} />
+      <Route path="/seeall/:playlistUUID" element={<SeeAll />} />
+      <Route path="/history/:userId" element={<History />} />
+      <Route path="/profile" element={<ProfileEdit />} />
+      <Route path="/search" element={<Search />} />
+      <Route path="/notification" element={<Notification />} />
+      <Route path="/subscription" element={<SubscriptionPage />} />
+
+      <Route path="*" element={<NotFoundPage />} />
+    </Routes>
+  );
+}
+
 function App() {
   return (
     <Router>
-      <Routes>
-        {/* Redirect root to /start */}
-        <Route path="/" element={<Navigate to="/start" replace />} />
-
-        <Route path="/start" element={<StartPage />} />
-        <Route path="/singin" element={<SingInPage />} />
-        <Route path="/verify" element={<VerificationPage />} />
-        <Route path="/home" element={<HomePage />} />
-        <Route path="/movie-stats/:contentID" element={<MovieStatsPage />} />
-        <Route path="/seeall/:playlistUUID" element={<SeeAll />} />
-        <Route path="/history/:userId" element={<History/>} />
-        <Route path="/profile" element={<ProfileEdit />} />
-         <Route path="/search" element={<Search />} />
-        <Route path="/notification" element={<Notification />} />
-        <Route path="/subscription" element={<SubscriptionPage />} />
-        <Route path="*" element={<NotFoundPage />} />
-      </Routes>
+      <AppWrapper />
     </Router>
   );
 }

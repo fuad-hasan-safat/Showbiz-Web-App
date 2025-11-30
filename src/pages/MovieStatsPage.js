@@ -46,11 +46,6 @@ export default function MovieStatsPage() {
       NAV GUARD (auth) + initial data fetch
   ---------------------------------------------------- */
   useEffect(() => {
-    if (!localStorage.getItem("access_token")) {
-      navigate("/singin");
-      return;
-    }
-
     if (contentID) {
       getVideoData(contentID);
       getIsLikedContent(contentID);

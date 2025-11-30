@@ -29,11 +29,7 @@ const HomePage = () => {
   const isLoading = useLoadingStore((s) => s.isLoading);
 
   useEffect(() => {
-    if (!localStorage.getItem("access_token")) {
-      navigate("/singin");
-    }
     fetchHomedata();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchHomedata = async () => {
@@ -125,6 +121,7 @@ const HomePage = () => {
                 views={`${item.viewCount / 1000}K`}
                 dates={`${formateddate}`}
                 contentId={item.contentId}
+                isPremium={item.isPremium}
               />
             );
           })}
@@ -162,29 +159,28 @@ const HomePage = () => {
 
           {/* Content */}
           <div className="space-y-8">
-          { (isLoading || !homepagedata) && activeTab === 0 && (
-            // show a few skeletons in slider style
-            <div className="mb-10 pl-[10px]">
-              <div className="flex gap-4 px-4 overflow-x-auto no-scrollbar">
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <div key={i} className="w-[200px] flex-shrink-0">
-                    <SkeletonCard variant="slider" />
-                  </div>
-                ))}
+            {(isLoading || !homepagedata) && activeTab === 0 && (
+              // show a few skeletons in slider style
+              <div className="mb-10 pl-[10px]">
+                <div className="flex gap-4 px-4 overflow-x-auto no-scrollbar">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <div key={i} className="w-[200px] flex-shrink-0">
+                      <SkeletonCard variant="slider" />
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
-          )}
+            )}
 
-          {!isLoading && homepagedata && activeTab === 0 && (
-            <>
-              {homepagedata.map(renderPlaylistSlider)}
-            </>
-          )}
+            {!isLoading && homepagedata && activeTab === 0 && (
+              <>{homepagedata.map(renderPlaylistSlider)}</>
+            )}
 
-          {homepagedata && activeTab !== 0 && activeTab <= homepagedata.length && (
-            renderPlaylistSlider(homepagedata[activeTab - 1])
-          )}
-        </div>
+            {homepagedata &&
+              activeTab !== 0 &&
+              activeTab <= homepagedata.length &&
+              renderPlaylistSlider(homepagedata[activeTab - 1])}
+          </div>
         </div>
       </div>
       <Footer />

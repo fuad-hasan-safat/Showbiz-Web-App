@@ -1,18 +1,10 @@
-import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React from 'react';
+
 import PhoneInput from '../components/Auth/PhoneInput';
-import { configs } from '../utils/constant';
-import { handleGetOtp } from '../utils/functions';
+
 import { Helmet } from 'react-helmet';
 
 const SingInPage = () => {
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (localStorage.getItem('access_token')) {
-      navigate('/home');
-    }
-  }, [navigate])
 
   return (
     <div className='container'>

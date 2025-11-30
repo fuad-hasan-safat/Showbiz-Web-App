@@ -4,47 +4,66 @@ import { IoStar, IoStarHalf } from "react-icons/io5";
 import { Link } from "react-router-dom";
 import { configs } from "./constant";
 import useLoadingStore from "../store/trendingStore";
-const { navigate } = require("react-router-dom");
+import { GiCrown } from "react-icons/gi";
+
+const PremiumCrown = ({ isPremium }) =>
+    isPremium ? (
+        <div className="absolute top-2 right-2 z-20">
+            <GiCrown className="text-yellow-400 text-[20px] drop-shadow-xl" />
+        </div>
+    ) : null;
 
 const CardWrapperSeeAll = ({ children, contentId }) => {
     const setLoading = useLoadingStore((s) => s.setLoading);
     setLoading(true);
-    localStorage.setItem("prev_route", 'seeall');
+    localStorage.setItem("prev_route", "seeall");
 
     return (
-    <div className="">
-        <Link to={`/movie-stats/${contentId}`} className="block h-full">
-            {children}
-        </Link>
-    </div>
-)};
+        <div>
+            <Link to={`/movie-stats/${contentId}`} className="block h-full">
+                {children}
+            </Link>
+        </div>
+    );
+};
 
-export const TrendingCardSeeAll = ({ title, subtitle, image, contentId, multiLine = false }) => {
-    if (!contentId) {
-        console.error('Missing contentId in TrendingCard');
-        return null;
-    }
+// -------------------- Trending SeeAll --------------------
+export const TrendingCardSeeAll = ({
+    title,
+    subtitle,
+    image,
+    contentId,
+    multiLine = false,
+    isPremium = false
+}) => {
+    if (!contentId) return null;
 
     return (
         <CardWrapperSeeAll contentId={contentId}>
             <div className="rounded-[15px] relative overflow-hidden h-[250px]">
+
+                <PremiumCrown isPremium={isPremium} />
+
                 <img
                     src={`${configs.API_BASE_PATH}${image}`}
                     alt={title}
                     className="w-full h-full rounded-[15px] object-cover"
                     loading="lazy"
-                    onError={(e) => {
-                        e.target.src = '/fallback-image.jpg';
-                    }}
                 />
+
                 <div className="p-2 absolute bottom-3 left-0 right-0 text-center">
-                    {multiLine ? (
-                        title.split('\n').map((line, i) => (
-                            <h4 key={i} className="text-[12px] lg:text-[14px] text-white font-medium">{line}</h4>
-                        ))
-                    ) : (
-                        <h4 className="text-[12px] lg:text-[14px] text-white font-medium">{title}</h4>
-                    )}
+                    {multiLine
+                        ? title.split("\n").map((line, i) => (
+                              <h4 key={i} className="text-[12px] lg:text-[14px] text-white font-medium">
+                                  {line}
+                              </h4>
+                          ))
+                        : (
+                            <h4 className="text-[12px] lg:text-[14px] text-white font-medium">
+                                {title}
+                            </h4>
+                          )}
+
                     <p className="text-white text-[10px] mt-1">{subtitle}</p>
                 </div>
             </div>
@@ -52,30 +71,35 @@ export const TrendingCardSeeAll = ({ title, subtitle, image, contentId, multiLin
     );
 };
 
-// New Release Card (other cards follow similar pattern)
-const NewReleaseCardSeeAll = ({ title, time, views, image, contentId }) => {
-    if (!contentId) {
-        console.error('Missing contentId in NewReleaseCard');
-        return null;
-    }
+// -------------------- New Release SeeAll --------------------
+const NewReleaseCardSeeAll = ({
+    title,
+    time,
+    views,
+    image,
+    contentId,
+    isPremium = false
+}) => {
+    if (!contentId) return null;
 
     return (
         <CardWrapperSeeAll contentId={contentId}>
-            <div className="bg-[#292626] border-2 border-[#262626] rounded-[10px] overflow-hidden h-full p-3">
+            <div className="bg-[#292626] border-2 border-[#262626] rounded-[10px] relative overflow-hidden p-3">
+
+                <PremiumCrown isPremium={isPremium} />
+
                 <img
                     src={`${configs.API_BASE_PATH}${image}`}
                     alt={title}
                     className="w-full h-[200px] rounded-[15px] object-cover"
                     loading="lazy"
-                    onError={(e) => {
-                        e.target.src = '/fallback-image.jpg';
-                    }}
                 />
+
                 <div className="flex justify-between mt-3 text-[10px] lg:text-[12px]">
-                    <span className='bg-[#141414] flex justify-center items-center rounded-full px-[10px] py-1 text-[#999999] border-2 border-[#2b2b2b]'>
-                        <BiTime className="pr-[2px]" />{time}
+                    <span className="bg-[#141414] flex justify-center items-center rounded-full px-[10px] py-1 text-[#999] border-2 border-[#2b2b2b]">
+                        <BiTime className="pr-[2px]" /> {time}
                     </span>
-                    <span className='bg-[#141414] flex justify-center items-center rounded-full px-[10px] py-1 text-[#999999] border-2 border-[#2b2b2b]'>
+                    <span className="bg-[#141414] flex justify-center items-center rounded-full px-[10px] py-1 text-[#999] border-2 border-[#2b2b2b]">
                         <IoMdEye /> {views}
                     </span>
                 </div>
@@ -83,27 +107,33 @@ const NewReleaseCardSeeAll = ({ title, time, views, image, contentId }) => {
         </CardWrapperSeeAll>
     );
 };
-const EntertainmentCardSeeAll = ({ title, dates, image, contentId }) => {
-    if (!contentId) {
-        console.error('Missing contentId in EntertainmentCard');
-        return null;
-    }
+
+// -------------------- Entertainment SeeAll --------------------
+const EntertainmentCardSeeAll = ({
+    title,
+    dates,
+    image,
+    contentId,
+    isPremium = false
+}) => {
+    if (!contentId) return null;
 
     return (
         <CardWrapperSeeAll contentId={contentId}>
-            <div className="bg-[#292626] border-2 border-[#262626] rounded-[10px] overflow-hidden h-full p-3">
+            <div className="bg-[#292626] border-2 border-[#262626] rounded-[10px] relative overflow-hidden p-3">
+
+                <PremiumCrown isPremium={isPremium} />
+
                 <img
                     src={`${configs.API_BASE_PATH}${image}`}
                     alt={title}
                     className="w-full h-[200px] rounded-[15px] object-cover"
                     loading="lazy"
-                    onError={(e) => {
-                        e.target.src = '/fallback-image.jpg';
-                    }}
                 />
-                <div className="flex justify-center text-center mt-3 text-[10px] lg:text-[12px]">
-                    <span className='bg-[#141414] rounded-full px-[10px] py-1 text-[#999999] border-2 border-[#2b2b2b]'>
-                        Release at <span className='text-white'>{dates}</span>
+
+                <div className="flex justify-center mt-3 text-[10px] lg:text-[12px]">
+                    <span className="bg-[#141414] rounded-full px-[10px] py-1 text-[#999] border-2 border-[#2b2b2b]">
+                        Release at <span className="text-white">{dates}</span>
                     </span>
                 </div>
             </div>
@@ -111,33 +141,40 @@ const EntertainmentCardSeeAll = ({ title, dates, image, contentId }) => {
     );
 };
 
-const LifestyleCardSeeAll = ({ title, time, views, image, contentId }) => {
-    if (!contentId) {
-        console.error('Missing contentId in LifestyleCard');
-        return null;
-    }
+// -------------------- Lifestyle SeeAll --------------------
+const LifestyleCardSeeAll = ({
+    title,
+    time,
+    views,
+    image,
+    contentId,
+    isPremium = false
+}) => {
+    if (!contentId) return null;
 
     return (
         <CardWrapperSeeAll contentId={contentId}>
-            <div className="bg-[#292626] border-2 border-[#262626] rounded-[10px] overflow-hidden p-3">
+            <div className="bg-[#292626] border-2 border-[#262626] rounded-[10px] relative overflow-hidden p-3">
+
+                <PremiumCrown isPremium={isPremium} />
+
                 <img
                     src={`${configs.API_BASE_PATH}${image}`}
                     alt={title}
                     className="w-full h-[200px] rounded-[15px] object-cover"
                     loading="lazy"
-                    onError={(e) => {
-                        e.target.src = '/fallback-image.jpg';
-                    }}
                 />
-                <div className="flex justify-between mt-3 text-[8px] lg:text-[12px]">
-                    <span className='bg-[#141414] flex justify-center items-center rounded-full px-[6px] py-1 text-[#999999] border-2 border-[#2b2b2b]'>
+
+                <div className="flex justify-between mt-3 text-[10px] lg:text-[12px]">
+                    <span className="bg-[#141414] flex items-center justify-center rounded-full px-[6px] py-1 text-[#999] border-2 border-[#2b2b2b]">
                         <BiTime className="pr-[2px]" /> {time}
                     </span>
-                    <span className='bg-[#141414] flex justify-center items-center rounded-full px-[6px] py-1 text-[#999999] border-2 border-[#2b2b2b]'>
-                        <IoStar className='text-[#FE0101]' />
-                        <IoStar className='text-[#FE0101]' />
-                        <IoStar className='text-[#FE0101]' />
-                        <IoStarHalf className='text-[#FE0101]' /> {views}
+
+                    <span className="bg-[#141414] flex items-center justify-center rounded-full px-[6px] py-1 text-[#999] border-2 border-[#2b2b2b]">
+                        <IoStar className="text-[#FE0101]" />
+                        <IoStar className="text-[#FE0101]" />
+                        <IoStar className="text-[#FE0101]" />
+                        <IoStarHalf className="text-[#FE0101]" /> {views}
                     </span>
                 </div>
             </div>
@@ -145,10 +182,10 @@ const LifestyleCardSeeAll = ({ title, time, views, image, contentId }) => {
     );
 };
 
+// Export mapping
 export const playlistTypeComponentsSeeAll = {
     trending: TrendingCardSeeAll,
     newrelease: NewReleaseCardSeeAll,
     entertainment: EntertainmentCardSeeAll,
-    lifestyle: LifestyleCardSeeAll,
-    // Add more mappings as needed
+    lifestyle: LifestyleCardSeeAll
 };

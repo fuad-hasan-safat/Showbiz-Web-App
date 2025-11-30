@@ -61,11 +61,6 @@ const SeeAll = () => {
 
   // Initial Load
   useEffect(() => {
-    if (!localStorage.getItem("access_token")) {
-      navigate("/singin");
-      return;
-    }
-
     if (playlistUUID) {
       fetchPlaylistData(playlistUUID, 1);
     }
@@ -148,6 +143,7 @@ const SeeAll = () => {
                     views={`${(item.viewCount / 1000).toFixed(1)}K`}
                     dates={formattedDate}
                     from={"seeall"}
+                    isPremium={item.isPremium}
                   />
                 );
               })}
