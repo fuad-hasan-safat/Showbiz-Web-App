@@ -1,0 +1,10 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        REACT_APP_ENV: development
+        REACT_APP_API_URL: http://localhost:3000
+    ports:
+      - "3004:80"

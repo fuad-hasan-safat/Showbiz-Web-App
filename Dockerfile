@@ -1,32 +1,40 @@
 # Step 1: Build the React app
-FROM node:20.12.2 AS build
+FROM node:20-alpine AS build
 
-# Set working directory
 WORKDIR /app
 
-# Copy package files
+ARG REACT_APP_API_URL
+ARG REACT_APP_ENV
+
+ENV REACT_APP_API_URL=$REACT_APP_API_URL
+ENV REACT_APP_ENV=$REACT_APP_ENV
+
+
+RUN echo "REACT_APP_API_URL=$REACT_APP_API_URL" > .env.production
+RUN echo "REACT_APP_ENV=$REACT_APP_ENV" >> .env.production
+
 COPY package*.json ./
 
-# Install dependencies
-RUN npm install
+# Clean cache to avoid stale bundles
+RUN npm install && npm cache clean --force
 
-# Copy the rest of the project
 COPY . .
 
-# Build the app
+# Automatic cache-busting
+RUN echo "CACHEBUST=$(date +%s)" >> .env.production
+
 RUN npm run build
+
 
 # Step 2: Serve with nginx
 FROM nginx:alpine
 
-# Remove default nginx static files
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
 RUN rm -rf /usr/share/nginx/html/*
 
-# Copy built files
 COPY --from=build /app/build /usr/share/nginx/html
 
-# Expose port 80
 EXPOSE 80
 
-# Start nginx server
 CMD ["nginx", "-g", "daemon off;"]

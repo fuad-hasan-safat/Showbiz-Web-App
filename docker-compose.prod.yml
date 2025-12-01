@@ -1,0 +1,10 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        REACT_APP_ENV: production
+        REACT_APP_API_URL: http://103.4.145.86:6102
+    ports:
+      - "3004:80"
