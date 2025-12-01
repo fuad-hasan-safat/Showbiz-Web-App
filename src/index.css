@@ -59,3 +59,45 @@ code {
   scrollbar-width: none;
 }
 
+
+
+@keyframes premiumGlow {
+  0% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 2px #fdd835) drop-shadow(0 0 4px #ffeb3b);
+  }
+  50% {
+    transform: scale(1.08);
+    filter: drop-shadow(0 0 6px #ffeb3b) drop-shadow(0 0 12px #fdd835);
+  }
+  100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 2px #fdd835) drop-shadow(0 0 4px #ffeb3b);
+  }
+}
+
+.animate-premium-glow {
+  animation: premiumGlow 1.8s ease-in-out infinite;
+}
+
+
+
+@keyframes fadeInScale {
+  0% {
+    opacity: 0;
+    transform: scale(0.8) translateY(20px);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.05) translateY(0);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-fadeInScale {
+  animation: fadeInScale 0.6s ease-out forwards;
+}
+

@@ -3,17 +3,14 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import VerificationPad from '../components/Auth/VerificationPad';
 import { configs } from '../utils/constant';
 import { Helmet } from 'react-helmet';
+import { useAuthStore } from '../store/authStore';
 
 const VerificationPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const phoneNumber = location.state?.phone || 'Unknown';
+  const login = useAuthStore.getState().login;
 
-  useEffect(() => {
-    if (localStorage.getItem('access_token')) {
-      navigate('/home');
-    }
-  }, [navigate])
 
   const handleComplete = async (props) => {
     console.log({ props })
@@ -43,6 +40,7 @@ const VerificationPage = () => {
       localStorage.setItem('user_phone', data.user.phone);
 
       // On successful verification
+      login(data);
       navigate('/home');
     } catch (error) {
       console.error('Verification failed:', error);

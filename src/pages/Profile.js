@@ -47,6 +47,7 @@ const ProfileEdit = () => {
   );
 
   const mobileNumber = useSubscriptionStore((s) => s.mobileNumber);
+  console.log("Mobile Number in ProfileEdit:", mobileNumber);
 
   useEffect(() => {
     if (!mobileNumber) {
@@ -76,7 +77,6 @@ const ProfileEdit = () => {
   // Submit Update
   // -----------------------------
   const handleSubmit = async () => {
-
     const nameChanged = profile.name !== profile.originalName;
 
     if (!selectedFile && !nameChanged) {
@@ -121,14 +121,12 @@ const ProfileEdit = () => {
     }
   };
 
-  if (loading || !profile) return <div>Loading...</div>;
-
   return (
     <div className="container bg-white">
       <Helmet>
-        <title>{profile.name}</title>
+        <title>{profile?.name}</title>
         <meta name="description" content="This is showbiz portal" />
-        <meta property="og:title" content={`${profile.name}`} />
+        <meta property="og:title" content={`${profile?.name}`} />
       </Helmet>
 
       <Toast />
@@ -148,64 +146,97 @@ const ProfileEdit = () => {
           </h2>
         </div>
 
-        {/* Profile Image */}
-        <div className="flex justify-center mb-8 relative">
-          <div className="relative w-24 h-24">
-            <img
-              src={profile.image}
-              alt="Profile"
-              className="w-24 h-24 rounded-full object-cover border-2 border-[#4e507e] shadow-md"
-            />
-            <div
-              onClick={handleImageClick}
-              className="absolute bottom-1 right-1 bg-white p-1 rounded-full shadow-md cursor-pointer"
-            >
-              <FaCamera className="text-sm text-[#4e507e]" />
+        {loading || !profile ? (
+          <>
+            {/* Skeleton Loader */}
+            <div className="animate-pulse mt-5">
+              {/* Profile Image Skeleton */}
+              <div className="flex justify-center mb-8">
+                <div className="w-24 h-24 bg-gray-300 rounded-full"></div>
+              </div>
+
+              {/* Name Input Skeleton */}
+              <div className="space-y-4">
+                <div>
+                  <div className="h-4 w-24 bg-gray-300 rounded mb-2"></div>
+                  <div className="h-10 bg-gray-200 rounded-md"></div>
+                </div>
+
+                {/* Phone Number Skeleton */}
+                <div>
+                  <div className="h-4 w-32 bg-gray-300 rounded mb-2"></div>
+                  <div className="h-10 bg-gray-200 rounded-md"></div>
+                </div>
+
+                {/* Save Button Skeleton */}
+                <div className="w-full h-12 bg-gray-300 rounded-md mt-10"></div>
+              </div>
             </div>
-            <input
-              type="file"
-              accept="image/*"
-              ref={fileInputRef}
-              onChange={handleImageChange}
-              className="hidden"
-            />
-          </div>
-        </div>
+          </>
+        ) : (
+          <>
+            {/* Profile Image */}
+            <div className="flex justify-center mb-8 relative">
+              <div className="relative w-24 h-24">
+                <img
+                  src={profile.image}
+                  alt="Profile"
+                  className="w-24 h-24 rounded-full object-cover border-2 border-[#4e507e] shadow-md"
+                />
+                <div
+                  onClick={handleImageClick}
+                  className="absolute bottom-1 right-1 bg-white p-1 rounded-full shadow-md cursor-pointer"
+                >
+                  <FaCamera className="text-sm text-[#4e507e]" />
+                </div>
+                <input
+                  type="file"
+                  accept="image/*"
+                  ref={fileInputRef}
+                  onChange={handleImageChange}
+                  className="hidden"
+                />
+              </div>
+            </div>
 
-        {/* Form */}
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium mb-1">Name</label>
-            <input
-              type="text"
-              value={profile.name}
-              onChange={(e) => updateProfileLocally({ name: e.target.value })}
-              className="w-full border border-gray-300 rounded-md px-3 py-3 outline-none"
-            />
-          </div>
+            {/* Form */}
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-1">Name</label>
+                <input
+                  type="text"
+                  value={profile.name}
+                  onChange={(e) =>
+                    updateProfileLocally({ name: e.target.value })
+                  }
+                  className="w-full border border-gray-300 rounded-md px-3 py-3 outline-none"
+                />
+              </div>
 
-          <div>
-            <label className="block text-sm font-medium mb-1">
-              Phone Number
-            </label>
-            <input
-              type="text"
-              value={profile.phone}
-              readOnly
-              className="w-full border border-gray-200 bg-gray-100 text-gray-500 rounded-md px-3 py-3 outline-none cursor-not-allowed"
-            />
-          </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">
+                  Phone Number
+                </label>
+                <input
+                  type="text"
+                  value={profile.phone}
+                  readOnly
+                  className="w-full border border-gray-200 bg-gray-100 text-gray-500 rounded-md px-3 py-3 outline-none cursor-not-allowed"
+                />
+              </div>
 
-          <div>
-            <button
-              onClick={handleSubmit}
-              disabled={isUpdating}
-              className="w-full py-3 rounded-md text-white font-semibold bg-gradient-to-r from-orange-400 to-red-500 mt-10 disabled:opacity-50"
-            >
-              {isUpdating ? "Saving..." : "Save Changes"}
-            </button>
-          </div>
-        </div>
+              <div>
+                <button
+                  onClick={handleSubmit}
+                  disabled={isUpdating}
+                  className="w-full py-3 rounded-md text-white font-semibold bg-gradient-to-r from-orange-400 to-red-500 mt-10 disabled:opacity-50"
+                >
+                  {isUpdating ? "Saving..." : "Save Changes"}
+                </button>
+              </div>
+            </div>
+          </>
+        )}
       </div>
 
       <Footer />

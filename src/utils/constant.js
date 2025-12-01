@@ -1,9 +1,10 @@
 import { BiTime } from "react-icons/bi";
 import { IoMdEye } from "react-icons/io";
 import { IoStar, IoStarHalf } from "react-icons/io5";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import useLoadingStore from "../store/trendingStore";
 import { GiCrown } from "react-icons/gi";
+import { useSubscriptionStore } from "../store/subscriptionStore";
 
 export const configs = {
     API_BASE_PATH: process.env.REACT_APP_API_URL,
@@ -47,29 +48,56 @@ export const ReleasesSliderSettings = {
 export const entertainmentSliderSettings = ReleasesSliderSettings;
 export const lifestyleSliderSettings = ReleasesSliderSettings;
 
-// Wrapper (No crown here!)
-const CardWrapper = ({ children, contentId }) => {
-    const setLoading = useLoadingStore((s) => s.setLoading);
 
-    localStorage.setItem("prev_route", "home");
-    setLoading(true);
+const CardWrapper = ({ children, contentId, isPremium = false }) => {
+    const setLoading = useLoadingStore((s) => s.setLoading);
+    const getSubscribeStatus = useSubscriptionStore((s) => s.getSubscribeStatus);
+    const navigate = useNavigate();
+
+    const handleClick = (e) => {
+        e.preventDefault();
+
+        // ⭐ CASE 1: If content is NOT premium → Let user access
+        if (!isPremium) {
+            setLoading(true);
+            localStorage.setItem("prev_route", "home");
+            navigate(`/movie-stats/${contentId}`);
+            return;
+        }
+
+        // ⭐ CASE 2: If content IS premium → Check subscription
+        const status = getSubscribeStatus(); // true or false
+
+        if (!status) {
+            navigate("/subscription"); // not subscribed
+            return;
+        }
+
+        // ⭐ Subscribed + Premium content → allow access
+        setLoading(true);
+        localStorage.setItem("prev_route", "home");
+        navigate(`/movie-stats/${contentId}`);
+    };
 
     return (
         <div className="px-2">
-            <Link to={`/movie-stats/${contentId}`} className="block h-full">
+            <div onClick={handleClick} className="block h-full cursor-pointer">
                 {children}
-            </Link>
+            </div>
         </div>
     );
 };
 
+
+
 // 🔥 Reusable crown badge
 const PremiumCrown = ({ isPremium }) =>
     isPremium ? (
-        <div className="absolute top-2 right-2 z-20">
-            <GiCrown className="text-yellow-500 text-[20px] drop-shadow-2xl shadow-yellow-500" />
+        <div className="absolute top-2 right-2 z-20 animate-premium-glow">
+            <GiCrown className="text-yellow-300 text-[22px] drop-shadow-xl" />
         </div>
     ) : null;
+
 
 // ---------------- CARDS ----------------
 
@@ -78,7 +106,7 @@ export const TrendingCard = ({ title, subtitle, image, contentId, multiLine = fa
     if (!contentId) return null;
 
     return (
-        <CardWrapper contentId={contentId}>
+        <CardWrapper contentId={contentId} isPremium={isPremium}>
             <div className="rounded-[15px] h-[280px] w-full relative overflow-hidden">
                 <PremiumCrown isPremium={isPremium} />
 
@@ -114,7 +142,7 @@ const NewReleaseCard = ({ title, time, views, image, contentId, isPremium = fals
     if (!contentId) return null;
 
     return (
-        <CardWrapper contentId={contentId}>
+        <CardWrapper contentId={contentId} isPremium={isPremium}>
             <div className="bg-[#292626] border border-[#262626] rounded-[10px] relative p-3 overflow-hidden">
 
                 <PremiumCrown isPremium={isPremium} />
@@ -144,7 +172,7 @@ const EntertainmentCard = ({ title, dates, image, contentId, isPremium = false }
     if (!contentId) return null;
 
     return (
-        <CardWrapper contentId={contentId}>
+        <CardWrapper contentId={contentId} isPremium={isPremium}>
             <div className="bg-[#292626] border border-[#262626] rounded-[10px] p-3 relative overflow-hidden">
 
                 <PremiumCrown isPremium={isPremium} />
@@ -170,7 +198,7 @@ const LifestyleCard = ({ title, time, views, image, contentId, isPremium = false
     if (!contentId) return null;
 
     return (
-        <CardWrapper contentId={contentId}>
+        <CardWrapper contentId={contentId} isPremium={isPremium}>
             <div className="bg-[#292626] border border-[#262626] rounded-[10px] p-3 relative overflow-hidden">
 
                 <PremiumCrown isPremium={isPremium} />

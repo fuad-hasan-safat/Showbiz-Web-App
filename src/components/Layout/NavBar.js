@@ -1,5 +1,5 @@
-import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { IoClose } from "react-icons/io5";
 import { CiUser } from "react-icons/ci";
 import { IoNotificationsOutline } from "react-icons/io5";
@@ -7,6 +7,8 @@ import { VscHistory } from "react-icons/vsc";
 import { HiOutlineLogout } from "react-icons/hi";
 import { IoIosArrowBack } from "react-icons/io";
 import { LuBadgePercent } from "react-icons/lu"; // Subscription look-alike icon
+import { useSubscriptionStore } from "../../store/subscriptionStore";
+import { useAuthStore } from "../../store/authStore";
 
 const NavBar = ({ isOpen, onClose }) => {
   const router = useNavigate();
@@ -15,7 +17,7 @@ const NavBar = ({ isOpen, onClose }) => {
       className={`
         fixed top-0 right-0 h-full w-64 bg-white z-40
         transform transition-transform duration-300 ease-in-out
-        ${isOpen ? 'translate-x-0' : 'translate-x-full'}
+        ${isOpen ? "translate-x-0" : "translate-x-full"}
       `}
     >
       {/* Close Icon */}
@@ -35,7 +37,6 @@ const NavBar = ({ isOpen, onClose }) => {
 
       {/* Menu Items */}
       <div className="p-4 space-y-6 border-b border-[#ddd]">
-
         <Link
           to="/profile"
           className="flex items-center gap-3 text-[16px] text-[#292626] hover:text-[#FE0101]"
@@ -55,7 +56,7 @@ const NavBar = ({ isOpen, onClose }) => {
         </Link>
 
         <Link
-          to={`/history/${localStorage.getItem('user_uuid')}`}
+          to={`/history/${localStorage.getItem("user_uuid")}`}
           className="flex items-center gap-3 text-[16px] text-[#292626] hover:text-[#FE0101]"
           onClick={onClose}
         >
@@ -78,10 +79,14 @@ const NavBar = ({ isOpen, onClose }) => {
         <button
           className="flex items-center gap-3 text-[16px] text-[#292626] hover:text-[#FE0101]"
           onClick={() => {
-            localStorage.removeItem('access_token');
-            localStorage.removeItem('user_uuid');
-            localStorage.removeItem('user_phone');
-            router('/start');
+            const logout = useAuthStore.getState().logout;
+            const clearSubscription =
+              useSubscriptionStore.getState().clearSubscription;
+
+            logout(); // clear auth info
+            clearSubscription(); // clear subscription info
+
+            router("/start");
             onClose();
           }}
         >
@@ -89,7 +94,6 @@ const NavBar = ({ isOpen, onClose }) => {
           Logout
         </button>
       </div>
-
     </div>
   );
 };

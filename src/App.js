@@ -1,37 +1,48 @@
-import React, { useEffect } from 'react';
+import React, { useEffect } from "react";
 import {
   BrowserRouter as Router,
   Routes,
   Route,
   Navigate,
-  useNavigate
-} from 'react-router-dom';
+  useNavigate,
+  useLocation,
+} from "react-router-dom";
 
-import { useSubscriptionStore } from './store/subscriptionStore';
+import { useSubscriptionStore } from "./store/subscriptionStore";
 
-import 'slick-carousel/slick/slick.css';
-import 'slick-carousel/slick/slick-theme.css';
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
-import HomePage from './pages/HomePage';
-import VerificationPage from './pages/VerificationPage';
-import MovieStatsPage from './pages/MovieStatsPage';
-import NotFoundPage from './pages/NotFoundPage';
-import StartPage from './pages/StartPage';
-import SeeAll from './pages/SeeAll';
-import ProfileEdit from './pages/Profile';
-import Notification from './pages/Notification';
-import SingInPage from './pages/SingInPage';
-import History from './pages/History';
-import Search from './pages/Search';
-import SubscriptionPage from './pages/Subscription';
+import HomePage from "./pages/HomePage";
+import VerificationPage from "./pages/VerificationPage";
+import MovieStatsPage from "./pages/MovieStatsPage";
+import NotFoundPage from "./pages/NotFoundPage";
+import StartPage from "./pages/StartPage";
+import SeeAll from "./pages/SeeAll";
+import ProfileEdit from "./pages/Profile";
+import Notification from "./pages/Notification";
+import SingInPage from "./pages/SingInPage";
+import History from "./pages/History";
+import Search from "./pages/Search";
+import SubscriptionPage from "./pages/Subscription";
+import SubscriptionRedirectPage from "./pages/SubscriptionRedirectPage";
 
 function AppWrapper() {
   const navigate = useNavigate();
+  const location = useLocation(); // ✅ use React Router location
   const fetchSubData = useSubscriptionStore((s) => s.fetchSubData);
 
   useEffect(() => {
     const checkSubscription = async () => {
       const res = await fetchSubData();
+
+      // ⭐ Do not redirect if we are on the redirect page
+      if (
+        location.pathname === "/subscription/redirectpage" ||
+        location.pathname === "/subscription"
+      ) {
+        return;
+      }
 
       if (res?.mobileNumber && res.mobileNumber !== false) {
         navigate("/home", { replace: true });
@@ -58,7 +69,10 @@ function AppWrapper() {
       <Route path="/search" element={<Search />} />
       <Route path="/notification" element={<Notification />} />
       <Route path="/subscription" element={<SubscriptionPage />} />
-
+      <Route
+        path="/subscription/redirectpage"
+        element={<SubscriptionRedirectPage />}
+      />
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );

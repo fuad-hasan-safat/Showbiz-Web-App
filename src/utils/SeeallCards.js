@@ -5,27 +5,56 @@ import { Link } from "react-router-dom";
 import { configs } from "./constant";
 import useLoadingStore from "../store/trendingStore";
 import { GiCrown } from "react-icons/gi";
+import { useSubscriptionStore } from "../store/subscriptionStore";
+import { useNavigate } from "react-router-dom";
+
 
 const PremiumCrown = ({ isPremium }) =>
     isPremium ? (
-        <div className="absolute top-2 right-2 z-20">
-            <GiCrown className="text-yellow-400 text-[20px] drop-shadow-xl" />
+        <div className="absolute top-2 right-2 z-20 animate-premium-glow">
+            <GiCrown className="text-yellow-300 text-[22px] drop-shadow-xl" />
         </div>
     ) : null;
 
-const CardWrapperSeeAll = ({ children, contentId }) => {
+
+
+const CardWrapperSeeAll = ({ children, contentId, isPremium = false }) => {
     const setLoading = useLoadingStore((s) => s.setLoading);
-    setLoading(true);
-    localStorage.setItem("prev_route", "seeall");
+    const getSubscribeStatus = useSubscriptionStore((s) => s.getSubscribeStatus);
+    const navigate = useNavigate();
+
+    const handleClick = (e) => {
+        e.preventDefault();
+
+        // ⭐ CASE 1: Non-premium content → Free access
+        if (!isPremium) {
+            setLoading(true);
+            localStorage.setItem("prev_route", "seeall");
+            navigate(`/movie-stats/${contentId}`);
+            return;
+        }
+
+        // ⭐ CASE 2: Premium content → Check subscription
+        const isSubscribed = getSubscribeStatus();
+
+        if (!isSubscribed) {
+            navigate("/subscription");
+            return;
+        }
+
+        // ⭐ CASE 3: Premium + Subscribed → Allow
+        setLoading(true);
+        localStorage.setItem("prev_route", "seeall");
+        navigate(`/movie-stats/${contentId}`);
+    };
 
     return (
-        <div>
-            <Link to={`/movie-stats/${contentId}`} className="block h-full">
-                {children}
-            </Link>
+        <div onClick={handleClick} className="cursor-pointer">
+            {children}
         </div>
     );
 };
+
 
 // -------------------- Trending SeeAll --------------------
 export const TrendingCardSeeAll = ({
@@ -39,7 +68,7 @@ export const TrendingCardSeeAll = ({
     if (!contentId) return null;
 
     return (
-        <CardWrapperSeeAll contentId={contentId}>
+        <CardWrapperSeeAll contentId={contentId} isPremium={isPremium}>
             <div className="rounded-[15px] relative overflow-hidden h-[250px]">
 
                 <PremiumCrown isPremium={isPremium} />
@@ -83,7 +112,7 @@ const NewReleaseCardSeeAll = ({
     if (!contentId) return null;
 
     return (
-        <CardWrapperSeeAll contentId={contentId}>
+        <CardWrapperSeeAll contentId={contentId} isPremium={isPremium}>
             <div className="bg-[#292626] border-2 border-[#262626] rounded-[10px] relative overflow-hidden p-3">
 
                 <PremiumCrown isPremium={isPremium} />
@@ -119,7 +148,7 @@ const EntertainmentCardSeeAll = ({
     if (!contentId) return null;
 
     return (
-        <CardWrapperSeeAll contentId={contentId}>
+        <CardWrapperSeeAll contentId={contentId} isPremium={isPremium}>
             <div className="bg-[#292626] border-2 border-[#262626] rounded-[10px] relative overflow-hidden p-3">
 
                 <PremiumCrown isPremium={isPremium} />
@@ -153,7 +182,7 @@ const LifestyleCardSeeAll = ({
     if (!contentId) return null;
 
     return (
-        <CardWrapperSeeAll contentId={contentId}>
+        <CardWrapperSeeAll contentId={contentId} isPremium={isPremium}>
             <div className="bg-[#292626] border-2 border-[#262626] rounded-[10px] relative overflow-hidden p-3">
 
                 <PremiumCrown isPremium={isPremium} />
