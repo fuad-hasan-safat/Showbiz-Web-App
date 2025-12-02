@@ -14,6 +14,7 @@ import Footer from "../components/Layout/Footer";
 export default function SubscriptionPage() {
   const navigate = useNavigate();
   const subscriptionStatus = useSubscriptionStore((s) => s.subscribeStatus);
+  const mobileNumber = useSubscriptionStore((s) => s.mobileNumber);
   const operator = useSubscriptionStore((s) => s.operator);
   const category = useSubscriptionStore((s) => s.category);
   const operators = useOperators();
@@ -43,7 +44,7 @@ export default function SubscriptionPage() {
             <IoIosArrowBack className="text-[22px]" />
             <span className="font-medium">Back</span>
           </div>
-          <ActiveSubscriptionCard operator={operator} category={category} />
+          <ActiveSubscriptionCard operator={operator} category={category} mobileNumber={mobileNumber} />
 
           <button
             onClick={() => navigate("/home")}
@@ -60,7 +61,7 @@ export default function SubscriptionPage() {
   return (
     <>
       <Header />
-      <div className="container min-h-screen bg-white p-4 relative">
+      <div className="container min-h-screen bg-white p-4 relative pb-24">
         {/* Back */}
         <div
           className="flex items-center gap-1 text-[16px] mb-4 mt-3 cursor-pointer"
@@ -186,7 +187,8 @@ export default function SubscriptionPage() {
             window.open(redirectUrl, "_blank"); // ⭐ opens in new tab
           }}
           style={!selectedPackage ? {} : currentOperator?.style}
-          className={`w-full h-[55px] rounded-lg text-white text-[18px] font-semibold ${
+          className={`w-[90%] mx-auto block shadow-lg z-50 h-[55px] 
+             rounded-lg text-white text-[18px] font-semibold ${
             !selectedPackage && "bg-gray-400 cursor-not-allowed"
           }`}
         >
