@@ -5,6 +5,6 @@ services:
       dockerfile: Dockerfile
       args:
         REACT_APP_ENV: production
-        REACT_APP_API_URL: http://103.4.145.86:6102
+        REACT_APP_API_URL: http://api.showbizbd.com
     ports:
       - "6103:80"

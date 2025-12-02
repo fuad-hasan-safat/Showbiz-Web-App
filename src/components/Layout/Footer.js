@@ -4,13 +4,14 @@ import { CiHome } from "react-icons/ci";
 import { IoSearch } from "react-icons/io5";
 import { IoMdTime } from "react-icons/io";
 import { FiUser } from "react-icons/fi";
+import { LuBadgePercent } from 'react-icons/lu';
 
 const Footer = () => {
   const location = useLocation();
 
   const menuItems = [
     { id: 'home', icon: <CiHome size={30} />, path: '/home' },
-    { id: 'search', icon: <IoSearch size={30} />, path: '#' },
+    { id: 'search', icon: <LuBadgePercent size={30} />, path: '/subscription' },
     { id: 'time', icon: <IoMdTime size={30} />, path: `/history/${localStorage.getItem('user_uuid')}` },
     { id: 'user', icon: <FiUser size={30} />, path: '/Profile' },
   ];

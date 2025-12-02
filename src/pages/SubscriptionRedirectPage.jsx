@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { IoIosArrowBack } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 import { useSubscriptionStore } from "../store/subscriptionStore";
+import Footer from "../components/Layout/Footer";
+import Header from "../components/Layout/Header";
 
 const SubscriptionRedirectPage = () => {
   const fetchSubData = useSubscriptionStore((s) => s.fetchSubData);
@@ -36,19 +38,24 @@ const SubscriptionRedirectPage = () => {
   }
 
   return (
-    <div className="container min-h-screen bg-white p-4 flex flex-col items-center">
-      {/* Common Back Button */}
-      <div
-        className="w-full flex items-center gap-2 cursor-pointer mb-6 mt-3"
-        onClick={() => navigate(-1)}
-      >
-        <IoIosArrowBack className="text-[22px]" />
-        <span className="font-medium">Back</span>
-      </div>
+    <>
+      <Header />
 
-      {/* Conditional Content */}
-      {status ? <SuccessRender /> : <FailedRender />}
-    </div>
+      <div className="container min-h-screen bg-white p-4 flex flex-col items-center pb-40">
+        {/* Common Back Button */}
+        <div
+          className="w-full flex items-center gap-2 cursor-pointer mb-6 mt-3"
+          onClick={() => navigate(-1)}
+        >
+          <IoIosArrowBack className="text-[22px]" />
+          <span className="font-medium">Back</span>
+        </div>
+
+        {/* Conditional Content */}
+        {status ? <SuccessRender /> : <FailedRender />}
+      </div>
+      <Footer />
+    </>
   );
 };
 
@@ -91,7 +98,7 @@ const SuccessRender = () => {
 
 /* ---------------- FAILED COMPONENT ---------------- */
 const FailedRender = () => {
-      const navigate = useNavigate();
+  const navigate = useNavigate();
 
   return (
     <>
@@ -112,7 +119,7 @@ const FailedRender = () => {
       <p className="text-center text-[16px] mt-3 text-gray-700">
         Your subscription was not activated. <br /> Please try again.
       </p>
-         <button
+      <button
         onClick={() => navigate("/subscription")}
         className="w-full h-[55px] rounded-lg text-white text-[18px] font-semibold mt-10 bg-gradient-to-r from-orange-500 to-red-500 shadow-md"
       >

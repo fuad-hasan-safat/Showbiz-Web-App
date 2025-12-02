@@ -29,7 +29,7 @@ export default function ActiveSubscriptionCard({ operator, category }) {
   return (
     <div className="w-full bg-white p-6 rounded-lg shadow-md border">
       <h2 className="text-xl font-semibold text-center mb-4 text-green-600">
-        You Are Already Subscribed 🎉
+        You Have Been Subscribed 🎉
       </h2>
 
       <div className="flex items-center gap-3 mb-4">
