@@ -44,7 +44,11 @@ export default function SubscriptionPage() {
             <IoIosArrowBack className="text-[22px]" />
             <span className="font-medium">Back</span>
           </div>
-          <ActiveSubscriptionCard operator={operator} category={category} mobileNumber={mobileNumber} />
+          <ActiveSubscriptionCard
+            operator={operator}
+            category={category}
+            mobileNumber={mobileNumber}
+          />
 
           <button
             onClick={() => navigate("/home")}
@@ -184,13 +188,13 @@ export default function SubscriptionPage() {
             const redirectUrl = `http://showbizbd.com/api-showbiz/web-aoc.php?category=${category}`;
 
             // Hard redirect
-            window.open(redirectUrl, "_blank"); // ⭐ opens in new tab
+            window.open(redirectUrl, "_self");
           }}
           style={!selectedPackage ? {} : currentOperator?.style}
           className={`w-[90%] mx-auto block shadow-lg z-50 h-[55px] 
              rounded-lg text-white text-[18px] font-semibold ${
-            !selectedPackage && "bg-gray-400 cursor-not-allowed"
-          }`}
+               !selectedPackage && "bg-gray-400 cursor-not-allowed"
+             }`}
         >
           Continue
         </button>
