@@ -22,19 +22,21 @@ const SubscriptionRedirectPage = () => {
 
       // Read URL params
       const params = new URLSearchParams(search);
-      const resultCode = params.get("resultCode");
-      const transactionId = params.get("transactionId");
-      const cnfmResult = params.get("cnfmResult");
+      const hasResultCode = params.has("resultCode");
+      const hasTransactionId = params.has("transactionId");
+      const hasCnfmResult = params.has("cnfmResult");
 
       // Check keys
-      if (!resultCode || !transactionId || !cnfmResult) {
+      if (!hasResultCode || !hasTransactionId || !hasCnfmResult) {
+        console.log("Missing keys in URL parameters");
         setIskeyAvailable(false);
-        setStatus(false); // force failed
+        setStatus(false);
         setLoading(false);
         return;
-      } else {
-        setIskeyAvailable(true);
       }
+
+      setIskeyAvailable(true);
+
 
       // Fetch subscription status
       await fetchSubData();
@@ -72,7 +74,6 @@ const SubscriptionRedirectPage = () => {
         </div>
 
         {/* Invalid key UI */}
-        {/* Invalid key UI */}
         {!iskeyAvailable && (
           <div className="w-full max-w-md bg-white rounded-2xl shadow-lg border border-red-200 p-8 text-center animate-fadeInScale">
             {/* Error Badge */}
@@ -105,7 +106,7 @@ const SubscriptionRedirectPage = () => {
         {/* Conditional Content */}
         {/* {status && iskeyAvailable ? <SuccessRender /> : <FailedRender />} */}
 
-        {status && iskeyAvailable && (
+        {iskeyAvailable && (
           <div className="w-full max-w-md bg-white rounded-2xl shadow-lg border border-gray-100 p-8 text-center animate-fadeInScale">
             {/* Success Badge */}
             <div className="mx-auto mb-6 w-16 h-16 flex items-center justify-center rounded-full bg-gradient-to-r from-orange-500 to-red-500 shadow-md">

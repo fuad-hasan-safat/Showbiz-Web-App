@@ -69,12 +69,18 @@ export default function MovieStatsPage() {
   const getVideoData = async (id) => {
     try {
       setError(null);
+      const msisdnUser = JSON.parse(localStorage.getItem("msisdnUser") || "{}");
+      const uuid = msisdnUser?.uuid || null;
+      const phone = msisdnUser?.phone || null;
+      const token = msisdnUser?.accessToken || null;
       const response = await fetch(
-        `${configs.API_BASE_PATH}/publish/get-content/${id}?nocache=${Date.now()}`,
+        `${
+          configs.API_BASE_PATH
+        }/publish/get-content/${id}?nocache=${Date.now()}`,
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            Authorization: `Bearer ${token}`,
           },
         }
       );
@@ -107,6 +113,10 @@ export default function MovieStatsPage() {
   ---------------------------------------------------- */
   const getIsLikedContent = async (id) => {
     try {
+      const msisdnUser = JSON.parse(localStorage.getItem("msisdnUser") || "{}");
+      const uuid = msisdnUser?.uuid || null;
+      const phone = msisdnUser?.phone || null;
+      const token = msisdnUser?.accessToken || null;
       const response = await fetch(
         `${configs.API_BASE_PATH}/favorite/check-like/${localStorage.getItem(
           "user_uuid"
@@ -114,7 +124,7 @@ export default function MovieStatsPage() {
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            Authorization: `Bearer ${token}`,
           },
         }
       );
@@ -136,13 +146,18 @@ export default function MovieStatsPage() {
   ---------------------------------------------------- */
   useEffect(() => {
     if (videoData && contentID) {
+      // 🔹 read from msisdnUser cookie/localStorage
+      const msisdnUser = JSON.parse(localStorage.getItem("msisdnUser") || "{}");
+      const uuid = msisdnUser?.uuid || null;
+      const phone = msisdnUser?.phone || null;
+      const token = msisdnUser?.accessToken || null;
+
       // fire and forget
       (async () => {
         try {
-          if (!localStorage.getItem("user_uuid")) return;
           const apidata = {
-            userId: localStorage.getItem("user_uuid"),
-            userPhone: localStorage.getItem("user_phone"),
+            userId: uuid,
+            userPhone: phone,
             contentId: contentID,
             contentName: videoData?.contentName || "",
             categoryName: videoData?.categoryName || "",
@@ -162,7 +177,8 @@ export default function MovieStatsPage() {
             viewCount: (videoData?.viewCount || 0) + 1,
             likeCount: videoData?.likeCount || 0,
             commentCount: videoData?.commentCount || 0,
-            playlistId: playlistData?.PlaylistUUID ?? playlistData?.playlistUUID ?? null,
+            playlistId:
+              playlistData?.PlaylistUUID ?? playlistData?.playlistUUID ?? null,
             playlistName: playlistData?.playlistName ?? null,
             isPublished: Boolean(videoData?.publishStatus),
           };
@@ -171,7 +187,7 @@ export default function MovieStatsPage() {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+              Authorization: `Bearer ${token}`,
             },
             body: JSON.stringify(apidata),
           });
@@ -224,7 +240,10 @@ export default function MovieStatsPage() {
       hls.on(Hls.Events.ERROR, (event, data) => {
         console.warn("HLS error", event, data);
       });
-    } else if (v.canPlayType && v.canPlayType("application/vnd.apple.mpegurl")) {
+    } else if (
+      v.canPlayType &&
+      v.canPlayType("application/vnd.apple.mpegurl")
+    ) {
       v.src = videoData.filePath;
       // leave loader until canplay
     }
@@ -380,7 +399,9 @@ export default function MovieStatsPage() {
     // If loader is active via global store, FullscreenLoader will show.
     return (
       <div className="flex justify-center items-center min-h-screen bg-black">
-        <p className="text-white text-lg">{error ? error : "Loading video..."}</p>
+        <p className="text-white text-lg">
+          {error ? error : "Loading video..."}
+        </p>
       </div>
     );
   }

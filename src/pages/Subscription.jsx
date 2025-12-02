@@ -85,35 +85,45 @@ export default function SubscriptionPage() {
         </p>
 
         <div className="grid grid-cols-3 gap-3 p-2 bg-[#F8FAFC] rounded-lg">
-          {operators.map((op) => (
-            <div
-              key={op.id}
-              onClick={() => setSelectedOperator(op.id)}
-              className={`p-3 flex items-center gap-3 rounded-lg cursor-pointer transition ${
-                selectedOperator === op.id
-                  ? "bg-white border-2 border-current"
-                  : "bg-transparent border-2 border-transparent"
-              }`}
-              style={selectedOperator === op.id ? { color: op.textColor } : {}}
-            >
-              <div
-                style={selectedOperator === op.id ? op.style : {}}
-                className={`w-5 h-5 rounded border flex items-center justify-center ${
-                  selectedOperator === op.id ? "" : "border-gray-400 bg-white"
-                }`}
-              >
-                {selectedOperator === op.id && (
-                  <FaCheck className="text-white text-[12px]" />
-                )}
-              </div>
+          {operators.map((op) => {
+            const isDisabled = op.id === "gp" || op.id === "bl";
 
-              <img
-                src={op.img}
-                alt={op.name}
-                className="w-[40px] h-[40px] object-contain"
-              />
-            </div>
-          ))}
+            return (
+              <div
+                key={op.id}
+                onClick={() => !isDisabled && setSelectedOperator(op.id)}
+                className={`
+        p-3 flex items-center gap-3 rounded-lg cursor-pointer transition 
+        ${
+          selectedOperator === op.id
+            ? "bg-white border-2 border-current"
+            : "bg-transparent border-2 border-transparent"
+        }
+        ${isDisabled ? "opacity-40 cursor-not-allowed" : ""}
+      `}
+                style={
+                  selectedOperator === op.id ? { color: op.textColor } : {}
+                }
+              >
+                <div
+                  style={selectedOperator === op.id ? op.style : {}}
+                  className={`w-5 h-5 rounded border flex items-center justify-center ${
+                    selectedOperator === op.id ? "" : "border-gray-400 bg-white"
+                  }`}
+                >
+                  {!isDisabled && selectedOperator === op.id && (
+                    <FaCheck className="text-white text-[12px]" />
+                  )}
+                </div>
+
+                <img
+                  src={op.img}
+                  alt={op.name}
+                  className="w-[40px] h-[40px] object-contain"
+                />
+              </div>
+            );
+          })}
         </div>
 
         {/* Package Cards */}

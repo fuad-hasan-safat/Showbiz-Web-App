@@ -62,9 +62,48 @@ export const useSubscriptionStore = create((set) => ({
       localStorage.setItem("subData", JSON.stringify(data));
 
       // 7️⃣ Update backend user
-      await axios.post(`${configs.API_BASE_PATH}/auth/create-msisdn-user`, {
-        phone: data.mobileNumber,
-      });
+      const response = await axios.post(
+        `${configs.API_BASE_PATH}/auth/create-msisdn-user`,
+        {
+          phone: data.mobileNumber,
+        }
+      );
+
+      // Extract important fields
+      const backendUser = response.data?.user;
+      const accessToken = response.data?.access_token;
+
+      if (backendUser?.uuid && backendUser?.phone) {
+        // 8️⃣ Save in Zustand
+        set({
+          userUuid: backendUser.uuid,
+          userPhone: backendUser.phone,
+          accessToken: accessToken,
+        });
+
+        // 9️⃣ Save cookie
+        Cookies.set(
+          "msisdnUser",
+          JSON.stringify({
+            uuid: backendUser.uuid,
+            phone: backendUser.phone,
+            accessToken: accessToken,
+          }),
+          { expires: 7 } // valid 7 days
+        );
+
+        // 🔟 Save localStorage
+        localStorage.setItem(
+          "msisdnUser",
+          JSON.stringify({
+            uuid: backendUser.uuid,
+            phone: backendUser.phone,
+            accessToken: accessToken,
+          })
+        );
+
+        console.log("MSISDN user saved:", backendUser);
+      }
 
       return data;
     } catch (err) {
