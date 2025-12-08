@@ -64,7 +64,7 @@ const ScorePage = () => {
     <div className="min-h-screen bg-gradient-to-b bg-white text-gray-500 flex flex-col items-center justify-center px-6 text-center">
       {/* BACK BUTTON */}
       <button
-        onClick={() => navigate('/home')}
+        onClick={() =>points === limit ? navigate('/home') : navigate(-1)}
         className="absolute top-4 left-4 flex items-center gap-1 text-gray-500 text-sm"
       >
         <IoChevronBackOutline size={20} /> Back
@@ -72,24 +72,33 @@ const ScorePage = () => {
       {/* When limit reached */}
       {isLimitOver ? (
         <>
-          <h1 className="text-3xl font-bold mb-2">🎉 Congratulations!</h1>
-          <p className="text-lg mb-6">Your Daily Quiz Point limit is over.</p>
+        <img
+        src="/images/congratulations.png"
+        />
+          <h1 className="text-3xl font-bold mb-2 text-red-500">🎉 Congratulations!</h1>
+          <p className="text-lg mb-6">Your Daily Quiz Point limit is over. You Successfully Completed today's points</p>
 
-          <p className="text-xl font-semibold mb-10">
+          {/* <p className="text-xl font-semibold mb-10">
             You earned <span className="text-yellow-500">{points}</span> points
             today!
-          </p>
+          </p> */}
+          <button
+          className="text-base font-semibold text-white bg-red-600 px-10 py-3 rounded-lg"
+          onClick={()=> navigate('/home')}
+          >
+            Go Home
+          </button>
         </>
       ) : (
         <>
           {/* Not reached limit */}
-          <h1 className="text-3xl font-bold mb-2">Keep Going! 🚀</h1>
+          <h1 className="text-3xl font-bold mb-2 text-red-400">Keep Going! 🚀</h1>
 
           <p className="text-xl font-semibold mt-4">
             {points}/{limit} points earned
           </p>
 
-          <p className="text-base mt-4 mb-10 text-gray-400">
+          <p className="text-base mt-4 mb-10 text-red-400">
             You're doing great! Keep playing and earn more points.
           </p>
 
