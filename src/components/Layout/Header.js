@@ -6,9 +6,9 @@ const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <div className="py-5 relative z-[999]">
+    <div className="py-5 sticky top-0 bg-white z-[999] ">
       <div className="container">
-        <div className="flex justify-between items-center px-5 relative">
+        <div className="flex justify-between items-center px-5 relative ">
           <div></div>
 
           {/* Logo */}

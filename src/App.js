@@ -26,6 +26,10 @@ import History from "./pages/History";
 import Search from "./pages/Search";
 import SubscriptionPage from "./pages/Subscription";
 import SubscriptionRedirectPage from "./pages/SubscriptionRedirectPage";
+import QuizRulesPage from "./pages/QuizRules";
+import QuizPage from "./pages/QuizPage";
+import ScorePage from "./pages/QuizScore";
+import { ToastContainer } from "react-toastify";
 
 function AppWrapper() {
   const navigate = useNavigate();
@@ -39,7 +43,8 @@ function AppWrapper() {
       // ⭐ Do not redirect if we are on the redirect page
       if (
         location.pathname === "/subscription/redirectpage" ||
-        location.pathname === "/subscription"
+        location.pathname === "/subscription" ||
+        location.pathname.startsWith("/quiz")
       ) {
         return;
       }
@@ -69,6 +74,9 @@ function AppWrapper() {
       <Route path="/search" element={<Search />} />
       <Route path="/notification" element={<Notification />} />
       <Route path="/subscription" element={<SubscriptionPage />} />
+      <Route path="/quiz/quiz-rule" element={<QuizRulesPage />} />
+      <Route path="/quiz/quiz-page" element={<QuizPage />} />
+      <Route path="/quiz/score" element={<ScorePage />} />
       <Route
         path="/subscription/redirectpage"
         element={<SubscriptionRedirectPage />}
@@ -82,6 +90,7 @@ function App() {
   return (
     <Router>
       <AppWrapper />
+      <ToastContainer />
     </Router>
   );
 }
