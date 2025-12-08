@@ -9,10 +9,7 @@ import "slick-carousel/slick/slick-theme.css";
 import Footer from "../components/Layout/Footer";
 import Header from "../components/Layout/Header";
 
-import {
-  playlistTypeComponents,
-  sliderSettings,
-} from "../utils/constant";
+import { playlistTypeComponents, sliderSettings } from "../utils/constant";
 
 import FullscreenLoader from "../components/loader/FullscreenLoader";
 import { SkeletonCard } from "../components/loader/SkeletonCard";
@@ -20,9 +17,12 @@ import { Helmet } from "react-helmet";
 
 import { usePlaylistStore } from "../store/playlistStore";
 import { configs } from "../utils/constant";
+import useLoadingStore from "../store/loadingStore";
 
 const HomePage = () => {
   const navigate = useNavigate();
+  const setLoading = useLoadingStore((s) => s.setLoading);
+
   const [activeTab, setActiveTab] = useState(0);
 
   // Zustand state
@@ -33,7 +33,7 @@ const HomePage = () => {
     loading,
     fetchPlaylists,
     fetchTrending,
-    fetchBanner
+    fetchBanner,
   } = usePlaylistStore();
 
   // Fetch data on mount
@@ -41,6 +41,7 @@ const HomePage = () => {
     fetchPlaylists();
     fetchTrending();
     fetchBanner();
+    setLoading(false);
   }, []);
 
   // Prepare playlist names for tabs
@@ -88,11 +89,14 @@ const HomePage = () => {
 
         <Slider {...sliderSettingsComponent}>
           {items.map((item, index) => {
-            const formattedDate = new Date(item.created_at).toLocaleDateString("en-GB", {
-              day: "numeric",
-              month: "long",
-              year: "numeric"
-            });
+            const formattedDate = new Date(item.created_at).toLocaleDateString(
+              "en-GB",
+              {
+                day: "numeric",
+                month: "long",
+                year: "numeric",
+              }
+            );
 
             return (
               <CardComponent
@@ -100,7 +104,10 @@ const HomePage = () => {
                 title={item.contentName}
                 subtitle={item.categoryName}
                 image={item.thumbnailPath}
-                time={`${Math.floor(item.videoLength / 3600)}h ${((item.videoLength % 3600) / 60).toFixed(2)}min`}
+                time={`${Math.floor(item.videoLength / 3600)}h ${(
+                  (item.videoLength % 3600) /
+                  60
+                ).toFixed(2)}min`}
                 views={`${(item.viewCount / 1000).toFixed(1)}K`}
                 dates={formattedDate}
                 contentId={item.contentId}
@@ -122,7 +129,7 @@ const HomePage = () => {
     return (
       <div
         className="relative mb-10 px-[15px] cursor-pointer"
-        onClick={() => navigate('/quiz/quiz-rule')}
+        onClick={() => navigate("/quiz/quiz-rule")}
       >
         <img
           src={`${configs.API_BASE_PATH}${banner.imageUrl}`}
@@ -173,11 +180,14 @@ const HomePage = () => {
 
         <Slider {...sliderSettingsComponent}>
           {items.map((item, index) => {
-            const formattedDate = new Date(item.created_at).toLocaleDateString("en-GB", {
-              day: "numeric",
-              month: "long",
-              year: "numeric",
-            });
+            const formattedDate = new Date(item.created_at).toLocaleDateString(
+              "en-GB",
+              {
+                day: "numeric",
+                month: "long",
+                year: "numeric",
+              }
+            );
 
             return (
               <CardComponent
@@ -185,7 +195,10 @@ const HomePage = () => {
                 title={item.contentName}
                 subtitle={item.categoryName}
                 image={item.thumbnailPath}
-                time={`${Math.floor(item.videoLength / 3600)}h ${((item.videoLength % 3600) / 60).toFixed(2)}min`}
+                time={`${Math.floor(item.videoLength / 3600)}h ${(
+                  (item.videoLength % 3600) /
+                  60
+                ).toFixed(2)}min`}
                 views={`${(item.viewCount / 1000).toFixed(1)}K`}
                 dates={formattedDate}
                 contentId={item.contentId}
@@ -209,11 +222,9 @@ const HomePage = () => {
 
       <div className="text-white min-h-screen">
         <div className="pb-28">
-
           {/* Tabs */}
           <div className="relative max-w-[540px] w-full">
             <div className="flex mb-5 gap-1 lg:gap-4 px-4 overflow-x-auto no-scrollbar">
-
               {playlistNames.map((playlist, index) => (
                 <button
                   key={index}
@@ -227,13 +238,11 @@ const HomePage = () => {
                   {playlist}
                 </button>
               ))}
-
             </div>
           </div>
 
           {/* CONTENT AREA */}
           <div className="space-y-8">
-
             {/* Loader */}
             {loading && (
               <div className="mb-10 pl-[10px]">
@@ -248,7 +257,9 @@ const HomePage = () => {
             )}
 
             {/* TRENDING */}
-            {!loading && trending && trending.items?.length > 0 &&
+            {!loading &&
+              trending &&
+              trending.items?.length > 0 &&
               renderTrendingSlider()}
 
             {/* QUIZ BANNER */}
@@ -257,8 +268,7 @@ const HomePage = () => {
             {/* PLAYLISTS */}
             {!loading && playlists?.length > 0 && (
               <>
-                {activeTab === 0 &&
-                  playlists.map(renderPlaylistSlider)}
+                {activeTab === 0 && playlists.map(renderPlaylistSlider)}
 
                 {activeTab !== 0 &&
                   activeTab <= playlists.length &&
@@ -270,7 +280,6 @@ const HomePage = () => {
             {!loading && !playlists?.length && (
               <p className="text-center text-gray-400">No content available</p>
             )}
-
           </div>
         </div>
       </div>
