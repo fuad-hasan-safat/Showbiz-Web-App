@@ -4,6 +4,7 @@ import VerificationPad from '../components/Auth/VerificationPad';
 import { configs } from '../utils/constant';
 import { Helmet } from 'react-helmet';
 import { useAuthStore } from '../store/authStore';
+import { normalizeAndValidate } from '../utils/functions';
 
 const VerificationPage = () => {
   const location = useLocation();
@@ -19,13 +20,15 @@ const VerificationPage = () => {
         throw new Error('Phone number is missing');
       }
 
+      const validNum = normalizeAndValidate(phoneNumber);
+    
       const response = await fetch(`${configs.API_BASE_PATH}/auth/verify-otp`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          phone: phoneNumber,
+          phone: validNum,
           otp: props
         }),
       });

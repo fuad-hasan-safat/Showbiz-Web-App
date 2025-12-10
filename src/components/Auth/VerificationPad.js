@@ -1,9 +1,10 @@
-import React, { useRef, useState } from 'react';
-import { handleGetOtp } from '../../utils/functions';
-import { useNavigate } from 'react-router-dom';
+import React, { useRef, useState } from "react";
+import { handleGetOtp, normalizeAndValidate } from "../../utils/functions";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const VerificationPad = ({ phone, onComplete }) => {
-  const [code, setCode] = useState(['', '', '', '']);
+  const [code, setCode] = useState(["", "", "", ""]);
   const inputsRef = useRef([]);
   const navigate = useNavigate();
 
@@ -23,25 +24,25 @@ const VerificationPad = ({ phone, onComplete }) => {
       focusInput(index + 1);
     }
 
-    if (newCode.every((digit) => digit !== '')) {
-      setTimeout(() => onComplete(newCode.join('')), 300);
+    if (newCode.every((digit) => digit !== "")) {
+      setTimeout(() => onComplete(newCode.join("")), 300);
     }
   };
 
   const handleKeyDown = (e, index) => {
-    if (e.key === 'Backspace') {
-      if (code[index] === '') {
+    if (e.key === "Backspace") {
+      if (code[index] === "") {
         focusInput(index - 1);
       } else {
         const newCode = [...code];
-        newCode[index] = '';
+        newCode[index] = "";
         setCode(newCode);
       }
     }
   };
 
   const handleNumberClick = (num) => {
-    const nextIndex = code.findIndex((digit) => digit === '');
+    const nextIndex = code.findIndex((digit) => digit === "");
     if (nextIndex !== -1) {
       const newCode = [...code];
       newCode[nextIndex] = num;
@@ -49,18 +50,32 @@ const VerificationPad = ({ phone, onComplete }) => {
       focusInput(nextIndex + 1);
 
       if (nextIndex === 3) {
-        setTimeout(() => onComplete(newCode.join('')), 300);
+        setTimeout(() => onComplete(newCode.join("")), 300);
       }
     }
   };
 
   const handleBackspaceClick = () => {
-    const lastFilledIndex = [...code].map((d, i) => (d ? i : -1)).filter(i => i !== -1).pop();
+    const lastFilledIndex = [...code]
+      .map((d, i) => (d ? i : -1))
+      .filter((i) => i !== -1)
+      .pop();
     if (lastFilledIndex !== undefined) {
       const newCode = [...code];
-      newCode[lastFilledIndex] = '';
+      newCode[lastFilledIndex] = "";
       setCode(newCode);
       focusInput(lastFilledIndex);
+    }
+  };
+
+  const handleResend = async () => {
+    const validNum = normalizeAndValidate(phone);
+    const data = await handleGetOtp(validNum, navigate);
+
+    if (data.status === 200) {
+      toast.success(`${data.message}`);
+    } else {
+      toast.error(`${data.message}`);
     }
   };
 
@@ -69,30 +84,35 @@ const VerificationPad = ({ phone, onComplete }) => {
       <div className="flex justify-center gap-4 mb-8">
         {code.map((digit, index) => (
           <input
-          key={index}
-          ref={(el) => (inputsRef.current[index] = el)}
-          type="text"
-          inputMode="numeric"
-          maxLength={1}
-          value={digit}
-          onChange={(e) => handleChange(e.target.value, index)}
-          onKeyDown={(e) => handleKeyDown(e, index)}
-          className={`w-[60px] h-[60px] text-[26px] text-[#0A0615] text-center font-medium 
+            key={index}
+            ref={(el) => (inputsRef.current[index] = el)}
+            type="text"
+            inputMode="numeric"
+            maxLength={1}
+            value={digit}
+            onChange={(e) => handleChange(e.target.value, index)}
+            onKeyDown={(e) => handleKeyDown(e, index)}
+            className={`w-[60px] h-[60px] text-[26px] text-[#0A0615] text-center font-medium 
             border rounded-[8px] 
-            ${digit ? 'text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-500' : 'text-[#0A0615]'} 
-            ${digit ? 'border-red-500' : 'border-[#E5E9EF]'} 
+            ${
+              digit
+                ? "text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-500"
+                : "text-[#0A0615]"
+            } 
+            ${digit ? "border-red-500" : "border-[#E5E9EF]"} 
             focus:outline-none focus:border-red-500`}
           />
-
         ))}
       </div>
 
-
       <p className="mb-10 text-center text-[15px] text-[#0B0616]">
-        Don't receive your code? 
+        Don't receive your code?
         <span
-        onClick={()=>handleGetOtp(phone, navigate)}
-         className="bg-gradient-to-r from-[#FB8408] to-[#FE0101] bg-clip-text text-transparent font-bold cursor-pointer">Resend</span>
+          onClick={handleResend}
+          className="bg-gradient-to-r from-[#FB8408] to-[#FE0101] bg-clip-text text-transparent font-bold cursor-pointer"
+        >
+          Resend
+        </span>
       </p>
       {/* <div className='bg-[#F3F3F6] pt-2 px-2 pb-[75px]'>
         <div className="grid grid-cols-3 gap-2 mb-2 leading-none">

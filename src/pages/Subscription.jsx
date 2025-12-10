@@ -201,7 +201,7 @@ export default function SubscriptionPage() {
             window.open(redirectUrl, "_self");
           }}
           style={!selectedPackage ? {} : currentOperator?.style}
-          className={`w-[90%] mx-auto block shadow-lg z-50 h-[55px] 
+          className={`w-[90%] mx-auto block shadow-lg z-[1111] h-[55px] 
              rounded-lg text-white text-[18px] font-semibold ${
                !selectedPackage && "bg-gray-400 cursor-not-allowed"
              }`}

@@ -98,7 +98,7 @@ export default function ActiveSubscriptionCard({ operator, category, mobileNumbe
 
       {/* ----------------- MODAL ----------------- */}
       {showModal && (
-        <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-6">
+        <div className="fixed inset-0 bg-black/40 z-[1111] flex items-center justify-center p-6">
           <div className="bg-white rounded-2xl w-full max-w-sm p-6 shadow-lg animate-fadeIn">
 
             {/* Header */}
