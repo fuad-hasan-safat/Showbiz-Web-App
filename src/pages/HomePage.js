@@ -115,7 +115,7 @@ const HomePage = () => {
       <div key={playlistUUID} className="mb-10 pl-[10px]">
         <div className="flex justify-between items-center mb-4 px-[5px]">
           <h2 className="text-[20px] font-semibold text-[#FE0101] capitalize">
-            {titleOverride || playlistName}
+            {playlistName}
           </h2>
 
           <button
