@@ -14,8 +14,8 @@ const ScorePage = () => {
 
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [isLimitOver, setIsLimitOver] = useState(false);
   const [isCampaignActive, setIsCampaignActive] = useState(true);
+  const [errorMessage, setErrorMessage] = useState(null);
 
   const fetchScore = useCallback(async () => {
     if (!msisdn) {
@@ -25,6 +25,8 @@ const ScorePage = () => {
 
     try {
       setLoading(true);
+      setErrorMessage(null);
+
       const { encrypted } = generateEncryptedToken();
 
       const res = await axios.get(
@@ -38,39 +40,25 @@ const ScorePage = () => {
 
       const { success, error } = res.data || {};
 
-      // Campaign closed check
-      const campaignClosed =
-        error?.errorMessage === "Campaign is closed";
-
-      setIsCampaignActive(!campaignClosed);
-
-      // Hard failure or no usable payload
-      if (!success && !error) {
+      // Campaign closed (API returns 200 with error object)
+      if (error?.errorMessage) {
+        setIsCampaignActive(false);
+        setErrorMessage(error.errorMessage);
         setData(null);
-        setIsLimitOver(false);
         return;
       }
 
-      // Limit reached (403 from backend)
-      if (error?.statusCode === 403 && success) {
-        setData(success);
-        setIsLimitOver(true);
-        return;
-      }
-
-      // Normal success flow
+      // Normal success
       if (success) {
         setData(success);
-        setIsLimitOver(false);
       } else {
         setData(null);
-        setIsLimitOver(false);
+        setErrorMessage("Unable to load score data.");
       }
     } catch (err) {
       console.error("Score fetch failed:", err);
+      setErrorMessage("Something went wrong. Please try again later.");
       setData(null);
-      setIsLimitOver(false);
-      setIsCampaignActive(true); // fallback to allow navigation
     } finally {
       setLoading(false);
     }
@@ -80,7 +68,7 @@ const ScorePage = () => {
     fetchScore();
   }, [fetchScore]);
 
-  /* ---------------- Derived State ---------------- */
+  /* ---------------- Loading ---------------- */
 
   if (loading) {
     return (
@@ -90,12 +78,19 @@ const ScorePage = () => {
     );
   }
 
-  const limit = data?.daily_points_limit ?? 0;
-  const points = data?.total_earn_points ?? 0;
+  /* ---------------- Derived State ---------------- */
 
-  const showLimitReached = isLimitOver && isCampaignActive;
-  const showContinue = !isLimitOver && isCampaignActive;
+  const limit = data?.daily_points_limit;
+  const points = data?.total_earn_points;
+
+  const hasValidScore =
+    typeof limit === "number" && typeof points === "number";
+
+  const isLimitReached = hasValidScore && points >= limit;
+  const canContinue = hasValidScore && points < limit;
+
   const showCampaignClosed = !isCampaignActive;
+  const showError = !showCampaignClosed && !hasValidScore;
 
   /* ---------------- UI ---------------- */
 
@@ -104,7 +99,7 @@ const ScorePage = () => {
       {/* Back Button */}
       <button
         onClick={() =>
-          points === limit ? navigate("/home") : navigate(-1)
+          (isLimitReached || showError )? navigate("/home") : navigate(-1)
         }
         className="absolute top-4 left-4 flex items-center gap-1 text-gray-500 text-sm"
       >
@@ -112,10 +107,32 @@ const ScorePage = () => {
         Back
       </button>
 
-      {/* Limit Reached */}
-      {showLimitReached && (
+      {/* Campaign Closed */}
+      {showCampaignClosed && (
         <>
-          <img src="/images/congratulations.png" alt="Congratulations" />
+          <h1 className="text-3xl font-bold mb-2 text-red-500">
+            Campaign Closed
+          </h1>
+          <p className="text-lg mb-6">
+            {errorMessage ?? "The campaign is currently unavailable."}
+          </p>
+          <button
+            className="text-base font-semibold text-white bg-red-600 px-10 py-3 rounded-lg"
+            onClick={() => navigate("/home")}
+          >
+            Go Home
+          </button>
+        </>
+      )}
+
+      {/* Congratulations */}
+      {isLimitReached && (
+        <>
+          <img
+            src="/images/congratulations.png"
+            alt="Congratulations"
+            className="mb-4"
+          />
           <h1 className="text-3xl font-bold mb-2 text-red-500">
             Congratulations!
           </h1>
@@ -131,21 +148,18 @@ const ScorePage = () => {
         </>
       )}
 
-      {/* Continue Playing */}
-      {showContinue && (
+      {/* Keep Going */}
+      {canContinue && (
         <>
           <h1 className="text-3xl font-bold mb-2 text-red-400">
             Keep Going!
           </h1>
-
           <p className="text-xl font-semibold mt-4">
             {points}/{limit} points earned
           </p>
-
           <p className="text-base mt-4 mb-10 text-red-400">
             You're doing great. Keep playing to earn more points.
           </p>
-
           <button
             className="bg-white text-red-600 px-6 py-3 rounded-xl font-bold text-lg shadow-lg active:opacity-80"
             onClick={() => navigate("/quiz/quiz-page")}
@@ -155,15 +169,14 @@ const ScorePage = () => {
         </>
       )}
 
-      {/* Campaign Closed */}
-      {showCampaignClosed && (
+      {/* Generic Error */}
+      {showError && (
         <>
-          <h1 className="text-3xl font-bold mb-2 text-red-500">
-            Campaign is Closed
+          <h1 className="text-2xl font-bold mb-2 text-red-500">
+            Error
           </h1>
-          <p className="text-lg mb-6">
-            The daily quiz campaign is currently closed. Please check back
-            later.
+          <p className="text-base mb-6">
+            {errorMessage ?? "Failed to load quiz data."}
           </p>
           <button
             className="text-base font-semibold text-white bg-red-600 px-10 py-3 rounded-lg"
