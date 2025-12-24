@@ -58,7 +58,9 @@ const QuizPage = () => {
     } catch (err) {
       console.error("Question fetch error:", err);
     } finally {
-      setLoading(false);
+      setTimeout(() => {
+        setLoading(false);
+      }, 1000);
     }
   };
 
@@ -176,7 +178,7 @@ const QuizPage = () => {
 
   const q = question?.question_info;
 
-  return (
+  return !loading && question && (
     <div className="min-h-screen bg-gradient-to-b from-red-600 to-red-500 text-white pb-32 relative">
       {/* HEADER */}
       <div className="relative flex items-center px-4 py-4">
